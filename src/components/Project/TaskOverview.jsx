@@ -13,13 +13,18 @@ import {
   YAxis,
 } from "recharts";
 import { FaDollarSign, FaClock } from "react-icons/fa";
-import ProjectMembers from "../Project/ProjectMember (1)";
-import FileUpload from "./FileUpload";
-import TableTask from "./TableTask";
-import InvoiceTable from "./invoices";
-import Timesheet from "../Tables/TimesheetTable";
-import TimeLogTable from "./TimeLogTable";
-import TaskPage from "../Tables/TaskTable";
+// import ProjectMembers from "../Project/ProjectMember (1)";
+
+// import TableTask from "./TableTask";
+// import InvoiceTable from "./invoices";
+// import Timesheet from "../Tables/TimesheetTable";
+// import TimeLogTable from "./TimeLogTable";
+// import FileUpload from "../Admin/FileUpload";
+import ProjectMembers from "./ProjectMember (1)";
+import TableTask from "../Admin/TableTask";
+import InvoiceTable from "../Admin/invoices";
+import FileUpload from "../Admin/FileUpload";
+import TimeLogTable from "../Admin/TimeLogTable";
 
 // Colors for the Pie Chart
 const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF4444"];
@@ -50,14 +55,14 @@ const taskProgressData = [
   { name: "Overdue", value: 30, color: "#dc3545" },
 ];
 
-export const ProjectOverview = () => {
+export const ItemDashboard = () => {
   return (
     <div className="container mt-4">
       <Row className="g-4">
         {/* Project Progress */}
         <Col md={6}>
           <Card className="p-3 shadow-sm">
-            <h5 className="text-start">Project Progress</h5>
+            <h5 className="text-start">Item Progress</h5>
             <div className="d-flex flex-wrap align-items-center justify-content-between">
               {/* Pie Chart Section */}
               <div
@@ -101,15 +106,15 @@ export const ProjectOverview = () => {
         {/* Client Info */}
         <Col md={6}>
           <Card className="p-3 shadow-sm">
-            <h5>Client</h5>
+            <h5>Item Id </h5>
             <div className="d-flex align-items-center">
-              <Image
+              {/* <Image
                 src="https://i.pravatar.cc/300?u=myrl.yundt@example.net9"
                 className="mb-2"
                 style={{ width: "70px", height: "70px", borderRadius: "50%" }}
-              />
+              /> */}
               <div className="ms-3">
-                <h6 className="mb-1">Kailee Kuvalis</h6>
+                <h6 className="mb-1">Item Name</h6>
                 <small className="text-muted">Langworth-Miller</small>
               </div>
             </div>
@@ -242,12 +247,14 @@ export const ProjectOverview = () => {
 };
 
 const components = [
-  <ProjectOverview />,
+  <ItemDashboard />,
   <ProjectMembers />,
-   <TaskPage />,
+ 
   <TableTask />,
+  <TableTask tag={History} />,
 
-  <InvoiceTable />,
+
+//   <InvoiceTable />,
   <FileUpload />,
   // <Timesheet />,
   <TimeLogTable />,
@@ -258,18 +265,18 @@ const components = [
 
 const tabLabels = [
   "Overview",
-  "Members",
-  "Items",
+  "Designers",
   
   "Tasks",
+  "History",
  
-  "Invoices",
+//   "Invoices",
   "Files",
   "Timesheet",
 ];
 const statusFilters = ["Pending", "InProgress", "Completed"];
 
-const ProjectDetail = () => {
+const ItemOverview = () => {
   const [activeIndex, setActiveIndex] = useState(0);
 
   return (
@@ -291,4 +298,4 @@ const ProjectDetail = () => {
   );
 };
 
-export default ProjectDetail;
+export default ItemOverview;

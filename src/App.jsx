@@ -59,6 +59,14 @@ import DealDetails from "./Designer/DealDetail";
 import LeadDetail from "./Designer/LeadDetail";
 import ProtectedRoute from "./Routes/ProtectedRoute";
 
+import TaskOverview from "./components/Project/TaskOverview";
+import ItemOverview from "./components/Project/TaskOverview";
+import QuoteTable from "./components/Tables/QuoteTable";
+import ProjectInvoiceTable from "./components/Tables/InvoiceTable";
+import WorkloadDesigner from "./Pages/Productionteam/WorkloadDesigner";
+import DesignerItems from "./Designer/Tasks";
+import OverTimeList from "./Pages/Productionteam/OverTimeList";
+
 function App() {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const location = useLocation();
@@ -127,11 +135,16 @@ function App() {
             <Route path="/addDepart" element={<AddDepartment />} />
             <Route path="/invoices" element={<InvoiceTable />} />
             <Route path="/addMember" element={<AddMembers />} />
+
+            <Route path="/quotetable" element={<QuoteTable />} />
+            <Route path="/projectinvoicetable" element={<ProjectInvoiceTable />} />
                
             </Route>
 
             <Route element={<ProtectedRoute allowedRoles={["admin", "project manager", "production team"]} />}>
                <Route path="/productiondashboard" element={<ProductionDashboard />} />
+               <Route path="/itemoverview" element={<ItemOverview />} />
+               <Route path="/overtimelist" element={<OverTimeList />} />
             </Route>
 
 
@@ -144,7 +157,7 @@ function App() {
            
             <Route path="/project" element={<ProjectOwner />} />
             <Route path="/projectdetails" element={<ProjectDetail />} />
-            <Route path="/tasklist" element={<TaskPage />} />
+            <Route path="/itemlist" element={<TaskPage />} />
             <Route path="/addproject" element={<AddProject />} />
             <Route path="/leavetable" element={<LeaveTable />} />
             <Route path="/addtask" element={<TaskForm />} />
@@ -185,7 +198,7 @@ function App() {
 
             {/* Designer Routes */}
             <Route path="/designerdashboard" element={<Designer />} />
-            <Route path="/designertask" element={<Tasks />} />
+            <Route path="/designeritems" element={<DesignerItems />} />
             <Route path="/dtimesheet" element={<DTimesheet />} />
             <Route path="/taskdetails" element={<TaskDetails />} />
             
@@ -196,6 +209,8 @@ function App() {
             <Route path="/jobs" element={<Jobs />} />
             <Route path="/traffic" element={<Traffic />} />
             <Route path="/edittaskdetails" element={<TaskDetailsForm />} />
+
+             <Route path="/workload" element={<WorkloadDesigner />} />
           </Routes>
         </div>
       </div>

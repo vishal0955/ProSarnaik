@@ -43,7 +43,7 @@ const EmployeeProfile = () => {
               <table className="table table-borderless text-center">
                 <thead>
                   <tr>
-                    <th onClick={() => navigate("/tasklist")}>Open Tasks</th>
+                    <th onClick={() => navigate("/itemlist")}>Open Tasks</th>
                     <th>Projects</th>
                     <th>Hours Logged</th>
                     <th>Tickets</th>

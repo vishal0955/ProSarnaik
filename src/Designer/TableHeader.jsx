@@ -15,7 +15,7 @@ const TableHeader = () => {
         <div className="d-flex align-items-center justify-content-between">
         <div className="d-flex align-items-center">
           <a className="navbar-brand fw-bold text-primary me-3" href="#">
-          Task
+          Items
           </a>
           
         </div>

@@ -77,8 +77,7 @@ const initialJobs = [
 const Traffic = () => {
   const [activeIndex, setActiveIndex] = useState(0);
   const [jobs, setJobs] = useState(initialJobs);
-  const navigate = useNavigate(); // Initialize useNavigate hook
-
+  const navigate = useNavigate(); 
   const handlePriorityChange = (index, priority) => {
     const updatedJobs = [...jobs];
     updatedJobs[index].priority = priority;
@@ -104,12 +103,15 @@ const Traffic = () => {
     <div className="container ">
   <div className="d-flex gap-3  mb-3">
         <Form.Select>
-          <option>Desginer</option>
+          <option>Designer</option>
           <option>Ambrose Jenkins</option>
           <option>Jared Eichmann</option>
+          <option>Alice</option>
         </Form.Select>
         <Form.Select>
           <option>All</option>
+          <option>Pending</option>
+          <option>In Progress</option>
         </Form.Select>
         <Form.Select>
           <option>All</option>

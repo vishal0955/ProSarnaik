@@ -47,7 +47,7 @@ const TableHeader = ({ title, buttonText }) => {
         
             
           </div>
-        {!buttonText === "Add Project" && <button variant="primary" className="btn btn-primary ms-2" onClick={() => setShowAddTask(true)} >Add Task </button>}
+        {(buttonText === "Add Item") && <button variant="primary" className="btn btn-primary ms-2" onClick={() => setShowAddTask(true)} >Add Task </button>}
           </div>
         <div
           className="collapse navbar-collapse justify-content-center"

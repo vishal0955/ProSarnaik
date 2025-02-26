@@ -2,7 +2,7 @@ import React from 'react'
 import { TaskTable } from '../components/Tables/TaskTable'
 import TableHeader from './TableHeader';
 
-const Tasks = () => {
+const DesignerItems = () => {
   return (
     <div className='container-fluid h-100'>
         <TableHeader />
@@ -11,4 +11,4 @@ const Tasks = () => {
   )
 }
 
-export default Tasks;
+export default DesignerItems;

@@ -1,201 +1,7 @@
 
-
-// import React, { useState } from "react";
-// import { Table, Dropdown } from "react-bootstrap";
-// import { FaEllipsisV } from "react-icons/fa";
-// import { useNavigate } from "react-router-dom"; // Import useNavigate from react-router-dom
-// import TableHeader from "./TableHeader";
-
-// const priorityColors = {
-//   High: "danger",
-//   Medium: "warning",
-//   Low: "primary",
-//   Normal: "success",
-// };
-
-// const statusColors = {
-//   Pending: "warning",
-//   InProgress: "info",
-//   "On Hold": "danger",
-//   "To Start": "info",
-//   Completed: "success",
-//   Cancelled: "secondary",
-// };
-
-// const initialJobs = [
-//   {
-//     jobId: "J001",
-//     jobName: "Banner Design",
-//     projectId: "P1001",
-//     projectName: "Summer Campaign",
-//     client: "ABC Corp",
-//     promotion: "Discount Offer",
-//     brand: "XYZ",
-//     subBrand: "Premium",
-//     flavour: "N/A",
-//     dateCreated: "2025-02-01",
-//     targetDate: "2025-02-10",
-//     packCode: "PK123",
-//     fgCode: "FG456",
-//     barcode: "789456123",
-//     instructions: "Use brand colors.",
-//     priority: "High",
-//     status: "InProgress",
-//   },
-//   {
-//     jobId: "J002",
-//     jobName: "Social Media Ad",
-//     projectId: "P1002",
-//     projectName: "Winter Campaign",
-//     client: "DEF Ltd",
-//     promotion: "Holiday Special",
-//     brand: "LMN",
-//     subBrand: "Budget",
-//     flavour: "N/A",
-//     dateCreated: "2025-02-02",
-//     targetDate: "2025-02-15",
-//     packCode: "PK789",
-//     fgCode: "FG987",
-//     barcode: "123456789",
-//     instructions: "Follow branding guidelines.",
-//     priority: "Medium",
-//     status: "Pending",
-//   },
-// ];
-
-// export const TaskTable = () => {
-//   const [jobs, setJobs] = useState(initialJobs);
-//   const navigate = useNavigate(); // Initialize useNavigate hook
-
-//   const handlePriorityChange = (index, priority) => {
-//     const updatedJobs = [...jobs];
-//     updatedJobs[index].priority = priority;
-//     setJobs(updatedJobs);
-//   };
-
-//   const handleStatusChange = (index, status) => {
-//     const updatedJobs = [...jobs];
-//     updatedJobs[index].status = status;
-//     setJobs(updatedJobs);
-//   };
-
-//   // const handleJobClick = (jobId) => {
-//   //   // Navigate to the details page with the jobId as a parameter
-//   //   navigate(`/details/${jobId}`);
-//   // };
-//   const handleJobClick = () => {
-//     // Navigate to the details page with the jobId as a parameter
-//     navigate(`/taskdetails`);
-//   };
-
-//   return (
-//     <div  style={{height: "100vh"}}>
-//     <Table responsive bordered hover className="tabledown" >
-//       <thead>
-//         <tr className="table-secondary">
-//           <th>Job ID</th>
-//           <th>Job Name</th>
-//           <th>Project</th>
-//           <th>Client</th>
-//           <th>Promotion</th>
-//           <th>Brand</th>
-//           <th>Date Created</th>
-//           <th>Target Date</th>
-//           <th>Pack Code</th>
-//           <th>FG Code</th>
-//           <th>Barcode</th>
-//           <th>Priority</th>
-//           <th>Status</th>
-//           <th>Action</th>
-//         </tr>
-//       </thead>
-//       <tbody>
-//         {jobs.map((job, index) => (
-//           <tr key={index}>
-//             <td 
-//               style={{ cursor: 'pointer'}}
-//               onClick={() => handleJobClick()} 
-//             >
-//               {job.jobId}
-             
-//             </td>
-//             <td 
-//               style={{ cursor: 'pointer'}} 
-//               onClick={() => handleJobClick()}
-//             >
-//               {job.jobName}
-//             </td>
-//             <td>{job.projectName} ({job.projectId})</td>
-//             <td>{job.client}</td>
-//             <td>{job.promotion}</td>
-//             <td>{job.brand} - {job.subBrand}</td>
-//             <td>{job.dateCreated}</td>
-//             <td>{job.targetDate}</td>
-//             <td>{job.packCode}</td>
-//             <td>{job.fgCode}</td>
-//             <td>{job.barcode}</td>
-//             <td>
-//               <Dropdown onSelect={(eventKey) => handlePriorityChange(index, eventKey)}>
-//                 <Dropdown.Toggle variant={priorityColors[job.priority]} id="dropdown-priority" style={{width:"90px"}}>
-//                   {job.priority}
-//                 </Dropdown.Toggle>
-//                 <Dropdown.Menu>
-//                   {Object.keys(priorityColors).map((priority) => (
-//                     <Dropdown.Item key={priority} eventKey={priority} className={`text-${priorityColors[priority]}`}>
-//                       {priority}
-//                     </Dropdown.Item>
-//                   ))}
-//                 </Dropdown.Menu>
-//               </Dropdown>
-//             </td>
-//             <td>
-//               <Dropdown onSelect={(eventKey) => handleStatusChange(index, eventKey)}>
-//                 <Dropdown.Toggle variant={statusColors[job.status]} id="dropdown-status" style={{width:"110px"}}>
-//                   {job.status}
-//                 </Dropdown.Toggle>
-//                 <Dropdown.Menu>
-//                   {Object.keys(statusColors).map((status) => (
-//                     <Dropdown.Item key={status} eventKey={status} className={`text-${statusColors[status]}`}>
-//                       {status}
-//                     </Dropdown.Item>
-//                   ))}
-//                 </Dropdown.Menu>
-//               </Dropdown>
-//             </td>
-//             <td>
-//               <Dropdown>
-//                 <Dropdown.Toggle variant="light" id="dropdown-basic">
-//                   <FaEllipsisV />
-//                 </Dropdown.Toggle>
-//                 <Dropdown.Menu>
-//                           <Dropdown.Item href="#">Post To Production</Dropdown.Item>
-//                   <Dropdown.Item href="#">Edit</Dropdown.Item>
-//                   <Dropdown.Item href="#">Delete</Dropdown.Item>
-//                 </Dropdown.Menu>
-//               </Dropdown>
-//             </td>
-//           </tr>
-//         ))}
-//       </tbody>
-//     </Table>
-//     </div>
-//   );
-// };
-
-// const TaskPage = () => {
-//   return (
-//     <div style={{height: "100vh"}}>
-//       <TableHeader title="All Tasks" buttonText="Add Task" />  
-//       <TaskTable className="tabledown" />
-//     </div>
-//   );
-// };
-
-// export default TaskPage;
-
 import React, { useState } from "react";
-import { Table, Dropdown } from "react-bootstrap";
-import { FaEllipsisV } from "react-icons/fa";
+import { Table, Dropdown, Button, OverlayTrigger, Tooltip } from "react-bootstrap";
+import { FaEllipsisV, FaLink } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import TableHeader from "./TableHeader";
 
@@ -219,7 +25,11 @@ const initialJobs = [
     packCode: "PK123",
     fgCode: "FG456",
     barcode: "789456123",
+    stage: "Home",
     status: "InProgress",
+    threeDFiles: ["3dfile1.stl", "3dfile2.stl"],
+    files: ["file1.pdf", "file2.pdf"],
+    links: ["http://example.com/link1", "http://example.com/link2"],
   },
   {
     jobId: "J002",
@@ -231,9 +41,15 @@ const initialJobs = [
     packCode: "PK789",
     fgCode: "FG987",
     barcode: "123456789",
+    stage: "Production",
     status: "Pending",
+    threeDFiles: ["3dfile3.stl"],
+    files: ["file3.pdf"],
+    links: ["http://example.com/link3"],
   },
 ];
+
+const stageOptions = ["Home", "Production", "Designer"];
 
 export const TaskTable = () => {
   const [jobs, setJobs] = useState(initialJobs);
@@ -245,8 +61,14 @@ export const TaskTable = () => {
     setJobs(updatedJobs);
   };
 
+  const handleStageChange = (index, stage) => {
+    const updatedJobs = [...jobs];
+    updatedJobs[index].stage = stage;
+    setJobs(updatedJobs);
+  };
+
   const handleJobClick = () => {
-    navigate(`/taskdetails`);
+    navigate(`/itemoverview`);
   };
 
   return (
@@ -263,17 +85,18 @@ export const TaskTable = () => {
             <th>Pack Code</th>
             <th>FG Code</th>
             <th>Barcode</th>
+            <th>Stage</th>
             <th>Status</th>
-            <th>3D</th>
-            <th>PDF</th>
+            <th>3D Files</th>
+            <th>Files</th>
             <th>Links</th>
+            <th>Actions</th>
           </tr>
         </thead>
         <tbody>
           {jobs.map((job, index) => (
             <tr key={index}>
               <td style={{ cursor: "pointer" }} onClick={() => handleJobClick()}>
-              
                 {job.jobId}
               </td>
               <td style={{ cursor: "pointer" }} onClick={() => handleJobClick()}>{job.brand}</td>
@@ -284,6 +107,20 @@ export const TaskTable = () => {
               <td>{job.packCode}</td>
               <td>{job.fgCode}</td>
               <td>{job.barcode}</td>
+              <td>
+                <Dropdown onSelect={(eventKey) => handleStageChange(index, eventKey)}>
+                  <Dropdown.Toggle variant="light" id="dropdown-stage" style={{ width: "110px" }}>
+                    {job.stage}
+                  </Dropdown.Toggle>
+                  <Dropdown.Menu>
+                    {stageOptions.map((stage) => (
+                      <Dropdown.Item key={stage} eventKey={stage}>
+                        {stage}
+                      </Dropdown.Item>
+                    ))}
+                  </Dropdown.Menu>
+                </Dropdown>
+              </td>
               <td>
                 <Dropdown onSelect={(eventKey) => handleStatusChange(index, eventKey)}>
                   <Dropdown.Toggle variant={statusColors[job.status]} id="dropdown-status" style={{ width: "110px" }}>
@@ -298,16 +135,37 @@ export const TaskTable = () => {
                   </Dropdown.Menu>
                 </Dropdown>
               </td>
-              <td>3D File</td>
-              <td>PDF File</td>
+              <td>
+                {job.threeDFiles.map((file, fileIndex) => (
+                  <div key={fileIndex}>{file}</div>
+                ))}
+              </td>
+              <td>
+                {job.files.map((file, fileIndex) => (
+                  <div key={fileIndex}>{file}</div>
+                ))}
+              </td>
+              <td>
+                {job.links.map((link, linkIndex) => (
+                  <OverlayTrigger
+                    key={linkIndex}
+                    placement="top"
+                    overlay={<Tooltip id={`tooltip-${linkIndex}`}>{link}</Tooltip>}
+                  >
+                    <a href={link} target="_blank" rel="noopener noreferrer">
+                      <FaLink />
+                    </a>
+                  </OverlayTrigger>
+                ))}
+              </td>
               <td>
                 <Dropdown>
                   <Dropdown.Toggle variant="light" id="dropdown-basic">
                     <FaEllipsisV />
                   </Dropdown.Toggle>
                   <Dropdown.Menu>
-                    <Dropdown.Item href="#">View</Dropdown.Item>
-                    <Dropdown.Item href="#">Download</Dropdown.Item>
+                    <Dropdown.Item href="#">Edit</Dropdown.Item>
+                    <Dropdown.Item href="#">Post to Production</Dropdown.Item>
                     <Dropdown.Item href="#">Share</Dropdown.Item>
                   </Dropdown.Menu>
                 </Dropdown>
@@ -330,4 +188,3 @@ const TaskPage = () => {
 };
 
 export default TaskPage;
-

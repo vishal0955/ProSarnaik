@@ -5,8 +5,7 @@ import { useNavigate } from "react-router-dom";
 import TaskForm from "../Forms/AddItem";
 import TaskNewForm from "../Tables/TaskNewForm";
 
-
-const TableTask = () => {
+const TableTask = ({ tag }) => {
   const [showModal, setShowModal] = useState(false);
   const navigate = useNavigate();
 
@@ -15,26 +14,37 @@ const TableTask = () => {
   };
 
   const priorityColors = {
-    High: { bg: "#dc3545", text: "white" }, // Red for High
-    Medium: { bg: "#ffc107", text: "black" }, // Yellow for Medium
-    Low: { bg: "#28a745", text: "white" } // Green for Low
+    High: { bg: "#dc3545", text: "white" },
+    Medium: { bg: "#ffc107", text: "black" },
+    Low: { bg: "#28a745", text: "white" }
   };
 
   const [tasks, setTasks] = useState([
     { code: "BOT-5", task: "March Hare. Visit.", priority: "High", startDate: "19-01-2025", dueDate: "27-01-2025", hours: "5h", assignedTo: "User1", status: "Doing" },
-    { code: "BOT-4", task: "As soon as look at.", priority: "Low", startDate: "06-01-2025", dueDate: "13-01-2025", hours: "0s", assignedTo: "User2", status: "Incomplete" },
-    { code: "BOT-2", task: "As she said these.", priority: "High", startDate: "10-01-2025", dueDate: "11-01-2025", hours: "0s", assignedTo: "User3", status: "To Do" },
-    { code: "BOT-1", task: "White Rabbit; 'in.", priority: "Medium", startDate: "19-01-2025", dueDate: "21-01-2025", hours: "0s", assignedTo: "User3", status: "Doing" },
+    { code: "BOT-4", task: "As soon as look at.", priority: "Low", startDate: "06-01-2025", dueDate: "13-01-2025", hours: "0s", assignedTo: "User2", status: "Completed" },
+    { code: "BOT-2", task: "As she said these.", priority: "High", startDate: "10-01-2025", dueDate: "11-01-2025", hours: "0s", assignedTo: "User3", status: "Cancelled" },
+    { code: "BOT-1", task: "White Rabbit; 'in.", priority: "Medium", startDate: "19-01-2025", dueDate: "21-01-2025", hours: "0s", assignedTo: "User3", status: "On Hold" },
     { code: "BOT-5", task: "March Hare. Visit.", priority: "High", startDate: "19-01-2025", dueDate: "27-01-2025", hours: "5h", assignedTo: "User1", status: "Doing" },
-    { code: "BOT-4", task: "As soon as look at.", priority: "Low", startDate: "06-01-2025", dueDate: "13-01-2025", hours: "0s", assignedTo: "User2", status: "Incomplete" },
-    { code: "BOT-2", task: "As she said these.", priority: "High", startDate: "10-01-2025", dueDate: "11-01-2025", hours: "0s", assignedTo: "User3", status: "To Do" },
-    { code: "BOT-1", task: "White Rabbit; 'in.", priority: "Medium", startDate: "19-01-2025", dueDate: "21-01-2025", hours: "0s", assignedTo: "User3", status: "Doing" }
+    { code: "BOT-4", task: "As soon as look at.", priority: "Low", startDate: "06-01-2025", dueDate: "13-01-2025", hours: "0s", assignedTo: "User2", status: "Completed" },
+    { code: "BOT-2", task: "As she said these.", priority: "High", startDate: "10-01-2025", dueDate: "11-01-2025", hours: "0s", assignedTo: "User3", status: "Cancelled" },
+    { code: "BOT-1", task: "White Rabbit; 'in.", priority: "Medium", startDate: "19-01-2025", dueDate: "21-01-2025", hours: "0s", assignedTo: "User3", status: "On Hold" }
   ]);
+
+  if(tag === "History") {
+    setTasks(filteredTasks);
+  }
+  // Filter tasks if tag is "History"
+  const filteredTasks = tag === "History"
+    ? tasks.filter(task => ["Completed", "Cancelled", "On Hold"].includes(task.status))
+    : tasks;
+
+  const handleTaskClick = () => {
+    navigate(`/taskdetails`);
+  };
 
   return (
     <div>
       <Container-fluid className="mt-4">
-        {/* Header Buttons */}
         <div className="d-flex justify-content-between mb-3">
           <Button variant="primary" onClick={handleClick}>
             <FaPlus className="me-2" /> Add Task
@@ -44,21 +54,6 @@ const TableTask = () => {
           </Button>
         </div>
 
-        {/* Filters */}
-        <div className="d-flex gap-3 mb-3">
-          <Form.Select>
-            <option>Hide completed task</option>
-          </Form.Select>
-          <Form.Select>
-            <option>All</option>
-          </Form.Select>
-          <Form.Select>
-            <option>All</option>
-          </Form.Select>
-          <Form.Control type="text" placeholder="Start typing to search" />
-        </div>
-
-        {/* Task Table */}
         <Table responsive bordered hover>
           <thead>
             <tr>
@@ -73,9 +68,9 @@ const TableTask = () => {
             </tr>
           </thead>
           <tbody>
-            {tasks.map((task, index) => (
+            {filteredTasks.map((task, index) => (
               <tr key={index}>
-                <td>{task.code}</td>
+                <td onClick={handleTaskClick}>{task.code}</td>
                 <td>
                   <span
                     className="badge"
@@ -83,6 +78,7 @@ const TableTask = () => {
                       backgroundColor: priorityColors[task.priority]?.bg,
                       color: priorityColors[task.priority]?.text
                     }}
+                    onClick={handleTaskClick}
                   >
                     {task.priority}
                   </span>{" "}
@@ -103,6 +99,9 @@ const TableTask = () => {
                     <option>Doing</option>
                     <option>Incomplete</option>
                     <option>To Do</option>
+                    <option>Completed</option>
+                    <option>Cancelled</option>
+                    <option>On Hold</option>
                   </Form.Select>
                 </td>
                 <td>
@@ -122,7 +121,6 @@ const TableTask = () => {
         </Table>
       </Container-fluid>
 
-      {/* Add Task Modal */}
       <Modal show={showModal} onHide={() => setShowModal(false)} size="lg">
         <Modal.Header closeButton></Modal.Header>
         <Modal.Body>
