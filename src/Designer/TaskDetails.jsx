@@ -1,15 +1,18 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Container, Row, Col, Card, Button, Tab, Nav } from "react-bootstrap";
 import { FaCheckCircle, FaUpload } from "react-icons/fa";
 import StopTimerModal from "./StopTimer";
+import { TaskLog } from "../data/TaskLog";
 
-const TaskDetails = () => {
+const TaskDetails = ( { taskId = "EMA-50", itemId = "ITEM-12345", designerId = "D001" }) => {
   const [showModal, setShowModal] = useState(false);
   const [timerRunning, setTimerRunning] = useState(false);
   const [startTime, setStartTime] = useState(null);
-  const [elapsedTime, setElapsedTime] = useState("0s");
+  const [elapsedTime, setElapsedTime] = useState("");
 
-  let timerInterval;
+  const [taskLog, setTaskLog] = useState(TaskLog) // Store a
+
+  const timerRef = useRef(null);
 
   // Function to format time as hh:mm AM/PM
   const formatTime = (date) => {
@@ -20,29 +23,77 @@ const TaskDetails = () => {
     });
   };
 
+  // Function to calculate elapsed time in minutes and seconds
+  const calculateElapsedTime = () => {
+    if (!startTime) return "0m 0s";
+
+    const diff = Math.floor((new Date() - startTime) / 1000);
+    const minutes = Math.floor(diff / 60);
+    const seconds = diff % 60;
+
+    return `${minutes}m ${seconds}s`;
+  };
+
   // Function to start the timer
   const handleStartTimer = () => {
+    if (timerRunning) return; // Prevent multiple timers
+
     const now = new Date();
     setStartTime(now);
     setTimerRunning(true);
-    setElapsedTime("0s");
+    setElapsedTime("0m 0s");
 
-    // Start interval to update elapsed time every second
-    timerInterval = setInterval(() => {
-      const diff = Math.floor((new Date() - now) / 1000);
-      const minutes = Math.floor(diff / 60);
-      const seconds = diff % 60;
-      setElapsedTime(`${minutes}m ${seconds}s`);
+    // Clear any existing interval before starting a new one
+    if (timerRef.current) clearInterval(timerRef.current);
+
+    // Update elapsed time every second
+    timerRef.current = setInterval(() => {
+      setElapsedTime(calculateElapsedTime());
     }, 1000);
   };
- 
 
+  const formatElapsedTime = (seconds) => {
+    const hrs = Math.floor(seconds / 3600);
+    const mins = Math.floor((seconds % 3600) / 60);
+    const secs = seconds % 60;
+    return `${hrs}h ${mins}m ${secs}s`;
+  };
   // Function to stop the timer
+
+
+  // Function to stop the timer and log the time
   const handleStopTimer = () => {
-    clearInterval(timerInterval);
+    if (!timerRunning) return;
+
+    clearInterval(timerRef.current);
     setTimerRunning(false);
     setShowModal(true);
+
+    const endTime = new Date();
+    const newLogEntry = {
+      taskId,
+      itemId,
+      designerId,
+      start: startTime.toLocaleTimeString(),
+      end: endTime.toLocaleTimeString(),
+      duration: formatElapsedTime(elapsedTime),
+    };
+
+    // Append new log data to taskLog array
+    setTaskLog((prevLogs) => [...prevLogs, newLogEntry]);
+   
   };
+ 
+  
+
+  // Cleanup interval when component unmounts
+  useEffect(() => {
+    return () => {
+      if (timerRef.current) clearInterval(timerRef.current);
+    };
+  }, []);
+
+  
 
   return (
     <div className="task-detail-section mt-4 mb-4">
@@ -51,7 +102,7 @@ const TaskDetails = () => {
           <h4 className="fw-bold">Task # EMA-50</h4>
           {timerRunning ? (
             <Button variant="danger" onClick={handleStopTimer}>
-              Stop Timer ({elapsedTime})
+              Stop Timer 
             </Button>
           ) : (
             <Button variant="primary" onClick={handleStartTimer}>
@@ -65,9 +116,8 @@ const TaskDetails = () => {
           <StopTimerModal
             show={showModal}
             handleClose={() => setShowModal(false)}
-            startTime={formatTime(startTime)}
+            startTime={startTime ? formatTime(startTime) : "N/A"}
             endTime={formatTime(new Date())}
-            
           />
         )}
 

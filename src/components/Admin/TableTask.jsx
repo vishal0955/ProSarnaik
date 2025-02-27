@@ -76,7 +76,7 @@ const TableTask = ({ tag }) => {
             {filteredTasks.map((task, index) => (
               <tr key={index}>
                 <td onClick={handleTaskClick} style={{ cursor: "pointer" }}>{task.code}</td>
-                <td>
+                <td   style={{ cursor: "pointer" }}   onClick={handleTaskClick}>
                   <span
                     className="badge"
                     style={{
@@ -84,10 +84,10 @@ const TableTask = ({ tag }) => {
                       color: priorityColors[task.priority]?.text,
                       cursor: "pointer",
                     }}
-                    onClick={handleTaskClick}
+                   
                   >
                     {task.priority}
-                  </span>{" "}
+                  </span >{" "}
                   {task.task}
                 </td>
                 <td>{task.startDate}</td>
