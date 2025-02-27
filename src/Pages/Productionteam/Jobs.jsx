@@ -1,10 +1,11 @@
 import React, { useState } from "react";
-import { Table, Dropdown, Modal, Button } from "react-bootstrap";
-import { FaEllipsisV } from "react-icons/fa";
+import { Table, Dropdown, Modal, Button, OverlayTrigger, Tooltip } from "react-bootstrap";
+import { FaEllipsisV, FaLink, FaFileAlt, FaCube } from "react-icons/fa";
 import TableHeader from "../../components/Tables/TableHeader";
 import { useNavigate } from "react-router-dom";
 import TaskDetailsForm from "./EditTaskDetails";
 import ChangeDesigner from "../../components/Admin/ChangeDesginer";
+// import './TaskTable.css'; // Import the custom CSS file
 
 const priorityColors = {
   High: "danger",
@@ -42,6 +43,7 @@ const initialJobs = [
     priority: "High",
     status: "InProgress",
     assignee: "John Doe",
+    stage: "Production",
   },
   {
     jobId: "J002",
@@ -62,8 +64,11 @@ const initialJobs = [
     priority: "Medium",
     status: "Pending",
     assignee: "Jane Smith",
+    stage: "Home",
   },
 ];
+
+const stageOptions = ["Home", "Production", "Designer"];
 
 export const TaskTable = ({ filterStatus }) => {
   const navigate = useNavigate();
@@ -72,7 +77,7 @@ export const TaskTable = ({ filterStatus }) => {
   const [jobs, setJobs] = useState(initialJobs);
 
   const handleJobClick = () => {
-    navigate(`/taskdetails`);
+    navigate(`/itemoverview`);
   };
 
   const filteredJobs = jobs.filter((job) => job.status === filterStatus || !filterStatus);
@@ -87,6 +92,17 @@ export const TaskTable = ({ filterStatus }) => {
     const updatedJobs = [...jobs];
     updatedJobs[index].status = status;
     setJobs(updatedJobs);
+  };
+
+  const getStage = (status) => {
+    if (status === "Pending" || status === "To Start") {
+      return "Home";
+    } else if (status === "InProgress") {
+      return "Production";
+    } else if (status === "On Hold" || status === "Completed" || status === "Cancelled") {
+      return "Designer";
+    }
+    return "Home";
   };
 
   return (
@@ -108,6 +124,7 @@ export const TaskTable = ({ filterStatus }) => {
             <th>Barcode</th>
             <th>Priority</th>
             <th>Status</th>
+            <th>Stage</th>
             <th>Action</th>
           </tr>
         </thead>
@@ -154,6 +171,7 @@ export const TaskTable = ({ filterStatus }) => {
                   </Dropdown.Menu>
                 </Dropdown>
               </td>
+              <td>{getStage(job.status)}</td>
               <td>
                 <Dropdown>
                   <Dropdown.Toggle variant="light" id="dropdown-basic">
@@ -204,7 +222,7 @@ export const TaskTable = ({ filterStatus }) => {
 const Jobs = ({ filterStatus }) => {
   return (
     <div>
-      <TableHeader title="All Tasks" buttonText="Add Task" />
+     <TableHeader title="All Item" buttonText="Add Item" />
       <TaskTable filterStatus={filterStatus} />
     </div>
   );

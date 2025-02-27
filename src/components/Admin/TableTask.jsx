@@ -62,7 +62,7 @@ const TableTask = ({ tag }) => {
               <th>Start Date</th>
               <th>Due Date</th>
               <th>Hours Logged</th>
-              <th>Assigned To</th>
+              {/* <th>Assigned To</th> */}
               <th>Status</th>
               <th>Action</th>
             </tr>
@@ -87,13 +87,13 @@ const TableTask = ({ tag }) => {
                 <td>{task.startDate}</td>
                 <td className="text-danger">{task.dueDate}</td>
                 <td>{task.hours}</td>
-                <td>
+                {/* <td>
                   <img
                     src={`https://i.pravatar.cc/40?img=${index + 1}`}
                     alt="User"
                     className="rounded-circle"
                   />
-                </td>
+                </td> */}
                 <td>
                   <Form.Select defaultValue={task.status}>
                     <option>Doing</option>

@@ -59,8 +59,8 @@ import DealDetails from "./Designer/DealDetail";
 import LeadDetail from "./Designer/LeadDetail";
 import ProtectedRoute from "./Routes/ProtectedRoute";
 
-import TaskOverview from "./components/Project/TaskOverview";
-import ItemOverview from "./components/Project/TaskOverview";
+import TaskOverview from "./components/Project/ItemOverview";
+import ItemOverview from "./components/Project/ItemOverview";
 import QuoteTable from "./components/Tables/QuoteTable";
 import ProjectInvoiceTable from "./components/Tables/InvoiceTable";
 import WorkloadDesigner from "./Pages/Productionteam/WorkloadDesigner";

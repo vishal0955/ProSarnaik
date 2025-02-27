@@ -76,7 +76,7 @@ const TimeLogTable = () => {
             <th>Start Time</th>
             <th>End Time</th>
             <th>Total Hours</th>
-            <th>Earnings</th>
+            {/* <th>Earnings</th> */}
             <th>Action</th>
           </tr>
         </thead>
@@ -102,7 +102,7 @@ const TimeLogTable = () => {
               <td>
                 {log.totalHours} <FaCheckCircle className="text-primary" />
               </td>
-              <td className="text-success fw-bold">{log.earnings}</td>
+              {/* <td className="text-success fw-bold">{log.earnings}</td> */}
               <td>
                 <Dropdown>
                   <Dropdown.Toggle variant="light" size="sm">
