@@ -1,11 +1,9 @@
 import React, { useState } from "react";
-import { Table, Dropdown, Modal, Button, OverlayTrigger, Tooltip } from "react-bootstrap";
-import { FaEllipsisV, FaLink, FaFileAlt, FaCube } from "react-icons/fa";
-import TableHeader from "../../components/Tables/TableHeader";
+import { Table, Dropdown, Modal, Button, Pagination } from "react-bootstrap";
+import { FaEllipsisV } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
-import TaskDetailsForm from "./EditTaskDetails";
 import ChangeDesigner from "../../components/Admin/ChangeDesginer";
-// import './TaskTable.css'; // Import the custom CSS file
+import TableHeader from "../../components/Tables/TableHeader";
 
 const priorityColors = {
   High: "danger",
@@ -33,17 +31,14 @@ const initialJobs = [
     promotion: "Discount Offer",
     brand: "XYZ",
     subBrand: "Premium",
-    flavour: "N/A",
     dateCreated: "2025-02-01",
     targetDate: "2025-02-10",
     packCode: "PK123",
     fgCode: "FG456",
     barcode: "789456123",
-    instructions: "Use brand colors.",
     priority: "High",
     status: "InProgress",
     assignee: "John Doe",
-    stage: "Production",
   },
   {
     jobId: "J002",
@@ -54,37 +49,25 @@ const initialJobs = [
     promotion: "Holiday Special",
     brand: "LMN",
     subBrand: "Budget",
-    flavour: "N/A",
     dateCreated: "2025-02-02",
     targetDate: "2025-02-15",
     packCode: "PK789",
     fgCode: "FG987",
     barcode: "123456789",
-    instructions: "Follow branding guidelines.",
     priority: "Medium",
     status: "Pending",
     assignee: "Jane Smith",
-    stage: "Home",
   },
 ];
 
-const stageOptions = ["Home", "Production", "Designer"];
-
-export const TaskTable = ({ filterStatus }) => {
+const TaskTable = ({ filterStatus }) => {
   const navigate = useNavigate();
-
   const [assigneModal, setAssigneModal] = useState(false);
   const [jobs, setJobs] = useState(initialJobs);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10); // Fixed state declaration
 
-  // const handleJobClick = () => {
-  //   navigate(`/itemoverview`);
-  // };
- 
-  const handleItemClick= (jobId) => {
-    navigate(`/designeritemoverview`);
-  }
-
-  const filteredJobs = jobs.filter((job) => job.status === filterStatus || !filterStatus);
+  const filteredJobs = jobs.filter((job) => !filterStatus || job.status === filterStatus);
 
   const handlePriorityChange = (index, priority) => {
     const updatedJobs = [...jobs];
@@ -98,58 +81,39 @@ export const TaskTable = ({ filterStatus }) => {
     setJobs(updatedJobs);
   };
 
-  const getStage = (status) => {
-    if (status === "Pending" || status === "To Start") {
-      return "Home";
-    } else if (status === "InProgress") {
-      return "Production";
-    } else if (status === "On Hold" || status === "Completed" || status === "Cancelled") {
-      return "Designer";
-    }
-    return "Home";
+  // Pagination Logic
+  const indexOfFirstItem = (currentPage - 1) * itemsPerPage;
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const paginatedJobs = filteredJobs.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(filteredJobs.length / itemsPerPage);
+
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
   };
 
   return (
     <div>
-      <Table responsive bordered hover className="tabledown">
+      {/* Job Table */}
+      <Table responsive bordered hover>
         <thead>
           <tr className="table-secondary">
             <th>Job ID</th>
             <th>Job Name</th>
-            <th>Project</th>
             <th>Client</th>
-            <th>Promotion</th>
-            <th>Brand</th>
-            <th>Assignee</th>
-            <th>Date Created</th>
-            <th>Target Date</th>
-            <th>Pack Code</th>
-            <th>FG Code</th>
-            <th>Barcode</th>
             <th>Priority</th>
             <th>Status</th>
-            <th>Stage</th>
             <th>Action</th>
           </tr>
         </thead>
         <tbody>
-          {filteredJobs.map((job, index) => (
+          {paginatedJobs.map((job, index) => (
             <tr key={index}>
-              <td style={{ cursor: 'pointer' }} onClick={handleItemClick}>{job.jobId}</td>
-              <td style={{ cursor: 'pointer' }} onClick={handleItemClick}>{job.jobName}</td>
-              <td>{job.projectName} ({job.projectId})</td>
+              <td>{job.jobId}</td>
+              <td>{job.jobName}</td>
               <td>{job.client}</td>
-              <td>{job.promotion}</td>
-              <td>{job.brand} - {job.subBrand}</td>
-              <td>{job.assignee}</td>
-              <td>{job.dateCreated}</td>
-              <td>{job.targetDate}</td>
-              <td>{job.packCode}</td>
-              <td>{job.fgCode}</td>
-              <td>{job.barcode}</td>
               <td>
                 <Dropdown onSelect={(eventKey) => handlePriorityChange(index, eventKey)}>
-                  <Dropdown.Toggle variant={priorityColors[job.priority]} id="dropdown-priority" style={{ width: '90px' }}>
+                  <Dropdown.Toggle variant={priorityColors[job.priority]} id={`dropdown-priority-${index}`}>
                     {job.priority}
                   </Dropdown.Toggle>
                   <Dropdown.Menu>
@@ -163,7 +127,7 @@ export const TaskTable = ({ filterStatus }) => {
               </td>
               <td>
                 <Dropdown onSelect={(eventKey) => handleStatusChange(index, eventKey)}>
-                  <Dropdown.Toggle variant={statusColors[job.status]} id="dropdown-status" style={{ width: '110px' }}>
+                  <Dropdown.Toggle variant={statusColors[job.status]} id={`dropdown-status-${index}`}>
                     {job.status}
                   </Dropdown.Toggle>
                   <Dropdown.Menu>
@@ -175,17 +139,15 @@ export const TaskTable = ({ filterStatus }) => {
                   </Dropdown.Menu>
                 </Dropdown>
               </td>
-              <td>{getStage(job.status)}</td>
               <td>
                 <Dropdown>
-                  <Dropdown.Toggle variant="light" id="dropdown-basic">
+                  <Dropdown.Toggle variant="light" id={`dropdown-action-${index}`}>
                     <FaEllipsisV />
                   </Dropdown.Toggle>
                   <Dropdown.Menu>
-                    <Dropdown.Item href="#">Edit</Dropdown.Item>
-                    <Dropdown.Item href="#">Delete</Dropdown.Item>
-                    <Dropdown.Item href="#">View</Dropdown.Item>
-                    <Dropdown.Item onClick={() => setAssigneModal(true)}>Assigned To</Dropdown.Item>
+                    <Dropdown.Item onClick={() => setAssigneModal(true)}>
+                      Assign Designer
+                    </Dropdown.Item>
                   </Dropdown.Menu>
                 </Dropdown>
               </td>
@@ -194,21 +156,24 @@ export const TaskTable = ({ filterStatus }) => {
         </tbody>
       </Table>
 
-      {/* Task Details Modal */}
-      {/* <Modal show={showModal} onHide={() => setShowModal(false)} size="lg">
-        <Modal.Header closeButton>
-          <Modal.Title>Edit Task Details</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <TaskDetailsForm />
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowModal(false)}>Close</Button>
-        </Modal.Footer>
-      </Modal> */}
+      {/* Pagination Section */}
+      <div className="d-flex justify-content-between align-items-center mt-3">
+        <span>
+          Showing {indexOfFirstItem + 1} to {Math.min(indexOfLastItem, filteredJobs.length)} of {filteredJobs.length} entries
+        </span>
+        <Pagination>
+          <Pagination.Prev disabled={currentPage === 1} onClick={() => handlePageChange(currentPage - 1)} />
+          {Array.from({ length: totalPages }, (_, index) => (
+            <Pagination.Item key={index} active={index + 1 === currentPage} onClick={() => handlePageChange(index + 1)}>
+              {index + 1}
+            </Pagination.Item>
+          ))}
+          <Pagination.Next disabled={currentPage === totalPages} onClick={() => handlePageChange(currentPage + 1)} />
+        </Pagination>
+      </div>
 
       {/* Assign Designer Modal */}
-      <Modal show={assigneModal} onHide={() => setAssigneModal(false)} size="lg">
+      <Modal show={assigneModal} onHide={() => setAssigneModal(false)}>
         <Modal.Header closeButton>
           <Modal.Title>Assign Designer</Modal.Title>
         </Modal.Header>
@@ -216,7 +181,9 @@ export const TaskTable = ({ filterStatus }) => {
           <ChangeDesigner />
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={() => setAssigneModal(false)}>Close</Button>
+          <Button variant="secondary" onClick={() => setAssigneModal(false)}>
+            Close
+          </Button>
         </Modal.Footer>
       </Modal>
     </div>
@@ -226,7 +193,7 @@ export const TaskTable = ({ filterStatus }) => {
 const Jobs = ({ filterStatus }) => {
   return (
     <div>
-     <TableHeader title="All Item" buttonText="Add Item" />
+      <TableHeader title="All Items" buttonText="Add Item" />
       <TaskTable filterStatus={filterStatus} />
     </div>
   );

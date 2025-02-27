@@ -1,5 +1,5 @@
 import React , {useState} from "react";
-import { Table, Button, Dropdown, DropdownButton, Modal } from "react-bootstrap";
+import { Table, Button, Dropdown, DropdownButton, Modal , Pagination  } from "react-bootstrap";
 import ContractForm from "../Forms/ContractForm";
 
 
@@ -18,6 +18,18 @@ const contracts = [
 
 const ContractTab = () => {
   const [showModal, setShowModal] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+
+  const totalPages = Math.ceil(contracts.length / itemsPerPage);
+  const indexOfFirstItem = (currentPage - 1) * itemsPerPage;
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const displayedContracts = contracts.slice(indexOfFirstItem, indexOfLastItem);
+
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
+
   return (
     <div className="container-fluid mt-4">
       <div className="d-flex justify-content-between mb-3">
@@ -75,13 +87,19 @@ const ContractTab = () => {
           ))}
         </tbody>
       </Table>
-      <div className="d-flex justify-content-between">
-        <span>Showing 1 to {contracts.length} of {contracts.length} entries</span>
-        <div>
-          <Button variant="outline-secondary" size="sm" disabled>Previous</Button>
-          <Button variant="primary" size="sm" className="ms-2">1</Button>
-          <Button variant="outline-secondary" size="sm" disabled className="ms-2">Next</Button>
-        </div>
+      <div className="d-flex justify-content-between align-items-center mt-3">
+        <span>
+          Showing {indexOfFirstItem + 1} to {Math.min(indexOfLastItem, contracts.length)} of {contracts.length} entries
+        </span>
+        <Pagination>
+          <Pagination.Prev disabled={currentPage === 1} onClick={() => handlePageChange(currentPage - 1)} />
+          {Array.from({ length: totalPages }, (_, index) => (
+            <Pagination.Item key={index + 1} active={index + 1 === currentPage} onClick={() => handlePageChange(index + 1)}>
+              {index + 1}
+            </Pagination.Item>
+          ))}
+          <Pagination.Next disabled={currentPage === totalPages} onClick={() => handlePageChange(currentPage + 1)} />
+        </Pagination>
       </div>
 
       <Modal show={showModal} onHide={() => setShowModal(false)} size="lg">

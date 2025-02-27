@@ -1,6 +1,5 @@
-
 import React, { useState } from "react";
-import { Table, Dropdown, Button, OverlayTrigger, Tooltip } from "react-bootstrap";
+import { Table, Dropdown, OverlayTrigger, Tooltip } from "react-bootstrap";
 import { FaEllipsisV, FaLink } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import TableHeader from "./TableHeader";
@@ -52,7 +51,7 @@ const initialJobs = [
 const stageOptions = ["Home", "Production", "Designer"];
 
 export const TaskTable = () => {
-  const role = localStorage.getItem("role");
+  const role = localStorage.getItem("role") || "guest";
   const [jobs, setJobs] = useState(initialJobs);
   const navigate = useNavigate();
 
@@ -69,9 +68,8 @@ export const TaskTable = () => {
   };
 
   const handleTaskClick = () => {
-    {role = "designer" ? navigate("/designeritemoverview") : navigate("/itemoverview")};
-
-  }
+    role === "designer" ? navigate("/designeritemoverview") : navigate("/itemoverview");
+  };
 
   return (
     <div style={{ height: "100vh" }}>
@@ -97,11 +95,13 @@ export const TaskTable = () => {
         </thead>
         <tbody>
           {jobs.map((job, index) => (
-            <tr key={index}>
-              <td style={{ cursor: "pointer" }} onClick={() => handleTaskClick()}>
+            <tr key={job.jobId}>
+              <td style={{ cursor: "pointer" }} onClick={handleTaskClick}>
                 {job.jobId}
               </td>
-              <td style={{ cursor: "pointer" }} onClick={() => handleTaskClick()}>{job.brand}</td>
+              <td style={{ cursor: "pointer" }} onClick={handleTaskClick}>
+                {job.brand}
+              </td>
               <td>{job.subBrand}</td>
               <td>{job.flavour}</td>
               <td>{job.packType}</td>
@@ -111,7 +111,7 @@ export const TaskTable = () => {
               <td>{job.barcode}</td>
               <td>
                 <Dropdown onSelect={(eventKey) => handleStageChange(index, eventKey)}>
-                  <Dropdown.Toggle variant="light" id="dropdown-stage" style={{ width: "110px" }}>
+                  <Dropdown.Toggle variant="light" style={{ width: "110px" }}>
                     {job.stage}
                   </Dropdown.Toggle>
                   <Dropdown.Menu>
@@ -125,35 +125,16 @@ export const TaskTable = () => {
               </td>
               <td>
                 <Dropdown onSelect={(eventKey) => handleStatusChange(index, eventKey)}>
-                  <Dropdown.Toggle variant={statusColors[job.status]} id="dropdown-status" style={{ width: "110px" }}>
+                  <Dropdown.Toggle variant={statusColors[job.status]} style={{ width: "110px" }}>
                     {job.status}
                   </Dropdown.Toggle>
-                  <Dropdown.Menu>
-                    {Object.keys(statusColors).map((status) => (
-                      <Dropdown.Item key={status} eventKey={status} className={`text-${statusColors[status]}`}>
-                        {status}
-                      </Dropdown.Item>
-                    ))}
-                  </Dropdown.Menu>
                 </Dropdown>
               </td>
-              <td>
-                {job.threeDFiles.map((file, fileIndex) => (
-                  <div key={fileIndex}>{file}</div>
-                ))}
-              </td>
-              <td>
-                {job.files.map((file, fileIndex) => (
-                  <div key={fileIndex}>{file}</div>
-                ))}
-              </td>
+              <td>{job.threeDFiles.join(", ")}</td>
+              <td>{job.files.join(", ")}</td>
               <td>
                 {job.links.map((link, linkIndex) => (
-                  <OverlayTrigger
-                    key={linkIndex}
-                    placement="top"
-                    overlay={<Tooltip id={`tooltip-${linkIndex}`}>{link}</Tooltip>}
-                  >
+                  <OverlayTrigger key={linkIndex} placement="top" overlay={<Tooltip>{link}</Tooltip>}>
                     <a href={link} target="_blank" rel="noopener noreferrer">
                       <FaLink />
                     </a>
@@ -162,7 +143,7 @@ export const TaskTable = () => {
               </td>
               <td>
                 <Dropdown>
-                  <Dropdown.Toggle variant="light" id="dropdown-basic">
+                  <Dropdown.Toggle variant="light">
                     <FaEllipsisV />
                   </Dropdown.Toggle>
                   <Dropdown.Menu>
@@ -180,13 +161,4 @@ export const TaskTable = () => {
   );
 };
 
-const TaskPage = () => {
-  return (
-    <div style={{ height: "100vh" }}>
-      <TableHeader title="All Item" buttonText="Add Item"  />
-      <TaskTable className="tabledown" />
-    </div>
-  );
-};
-
-export default TaskPage;
+export default TaskTable;

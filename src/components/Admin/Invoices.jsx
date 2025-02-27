@@ -1,11 +1,13 @@
 import React, { useState } from "react";
-import { Table, Dropdown, Button, Form, InputGroup, Modal } from "react-bootstrap";
+import { Table, Dropdown, Button, Form, InputGroup, Modal, Pagination } from "react-bootstrap";
 import InvoiceForm from "./InvoiceForm";
 import CreateTimeInvoice from "./CreateTimeInvoice (1)";
 
 const InvoiceTable = () => {
   const [showModal, setShowModal] = useState(false);
   const [dataModal, setDataModal] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
 
   const invoices = [
     {
@@ -36,47 +38,15 @@ const InvoiceTable = () => {
     },
   ];
 
-  // ✅ Corrected function for handling modal states
-  const handleShowModal = (type) => {
-    if (type === "createInvoice") {
-      setShowModal(true);
-    } else if (type === "createTime") {
-      setDataModal(true);
-    }
-  };
+  const totalPages = Math.ceil(invoices.length / itemsPerPage);
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentInvoices = invoices.slice(indexOfFirstItem, indexOfLastItem);
 
-  
- const handleClick=({createInvoice})=>{
-   setShowModal(true);
-    
+  const handlePageChange = (pageNumber) => setCurrentPage(pageNumber);
 
- }
   return (
     <div className="container-fluid p-3">
-      {/* Top Controls */}
-      <div className="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
-        <div className="d-flex flex-wrap gap-2">
-          <Button variant="primary" onClick={() => handleShowModal("createInvoice")}>
-            + Create Invoice
-          </Button>
-          <Button variant="primary" onClick={() => handleShowModal("createTime")}>
-            + Create TimeLog Invoice
-          </Button>
-          <Button variant="outline-secondary">📁 Export</Button>
-        </div>
-        <div className="d-flex flex-wrap gap-2">
-          <Form.Select className="w-auto">
-            <option>All</option>
-            <option>Paid</option>
-            <option>Unpaid</option>
-          </Form.Select>
-          <InputGroup className="w-auto">
-            <Form.Control placeholder="Start typing to search" />
-          </InputGroup>
-        </div>
-      </div>
-
-      {/* Invoice Table */}
       <div className="table-responsive">
         <Table striped bordered hover className="text-center">
           <thead>
@@ -92,33 +62,13 @@ const InvoiceTable = () => {
             </tr>
           </thead>
           <tbody>
-            {invoices.map((item, index) => (
+            {currentInvoices.map((item, index) => (
               <tr key={index}>
                 <td>{item.code}</td>
-                <td className="fw-bold">{item.invoice}</td>
+                <td>{item.invoice}</td>
                 <td>{item.project}</td>
-                <td>
-                  <div className="d-flex align-items-center">
-                    <img
-                      src="https://i.pravatar.cc/300?u=myrl.yundt@example.net9"
-                      alt="client"
-                      className="rounded-circle me-2"
-                      style={{ width: "50px", height: "50px" }}
-                    />
-                    <div>
-                      <strong>{item.client}</strong>
-                      <br />
-                      <small>{item.company}</small>
-                    </div>
-                  </div>
-                </td>
-                <td>
-                  <div>
-                    <strong>Total:</strong> {item.total}
-                  </div>
-                  <div className="text-success">Paid: {item.paid}</div>
-                  <div className="text-danger">Unpaid: {item.unpaid}</div>
-                </td>
+                <td>{item.client}</td>
+                <td>{item.total}</td>
                 <td>{item.date}</td>
                 <td className={item.statusColor}>{item.status}</td>
                 <td>
@@ -137,48 +87,32 @@ const InvoiceTable = () => {
         </Table>
       </div>
 
-      {/* Pagination */}
-      <div className="d-flex justify-content-between align-items-center">
+      <div className="d-flex justify-content-between align-items-center mt-3">
         <div>
-          Show{" "}
-          <Form.Select size="sm" className="d-inline w-auto">
-            <option>10</option>
-            <option>20</option>
-          </Form.Select>{" "}
-          entries
+          <span>
+            Showing {indexOfFirstItem + 1} to {Math.min(indexOfLastItem, invoices.length)} of {invoices.length} entries
+          </span>
         </div>
-        <div>
-          <Button variant="light" size="sm">
-            Previous
-          </Button>
-          <Button variant="primary" size="sm" className="mx-1">
-            1
-          </Button>
-          <Button variant="light" size="sm">
-            Next
-          </Button>
-        </div>
+        <Pagination>
+          <Pagination.Prev
+            disabled={currentPage === 1}
+            onClick={() => handlePageChange(currentPage - 1)}
+          />
+          {Array.from({ length: totalPages }, (_, index) => (
+            <Pagination.Item
+              key={index}
+              active={index + 1 === currentPage}
+              onClick={() => handlePageChange(index + 1)}
+            >
+              {index + 1}
+            </Pagination.Item>
+          ))}
+          <Pagination.Next
+            disabled={currentPage === totalPages}
+            onClick={() => handlePageChange(currentPage + 1)}
+          />
+        </Pagination>
       </div>
-
-      {/* Create Invoice Modal */}
-      <Modal show={showModal} onHide={() => setShowModal(false)} size="lg">
-        <Modal.Header closeButton>
-          <Modal.Title>Create Invoice</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <InvoiceForm />
-        </Modal.Body>
-      </Modal>
-
-      {/* Create TimeLog Invoice Modal */}
-      <Modal show={dataModal} onHide={() => setDataModal(false)} size="lg">
-        <Modal.Header closeButton>
-          <Modal.Title>Create TimeLog Invoice</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <CreateTimeInvoice />
-        </Modal.Body>
-      </Modal>
     </div>
   );
 };

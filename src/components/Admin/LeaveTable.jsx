@@ -1,10 +1,14 @@
 import React, {useState} from "react";
-import { Table, Button, Form, Modal } from "react-bootstrap";
+import { Table, Button, Form, Modal ,Pagination } from "react-bootstrap";
 import { FaEllipsisV } from "react-icons/fa";
 import AssignLeave from "../Forms/AddLeave";
 
 
 const LeaveTable = () => {
+  
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
+
   const leaves = [
     { name: "Ambrose Jenkins", role: "Team Lead", date: "19-01-2025 (Sunday)", duration: "Full Day", status: "Approved", type: "Sick", paid: "Paid" },
     { name: "Ambrose Jenkins", role: "Team Lead", date: "14-01-2025 (Tuesday)", duration: "Full Day", status: "Pending", type: "Sick", paid: "Paid" },
@@ -27,6 +31,23 @@ const LeaveTable = () => {
  console.log("Button clicked!");
     setShowModal(true);
  }
+
+  // Pagination Logic
+  const indexOfFirstItem = (currentPage - 1) * itemsPerPage;
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const paginatedLeaves = leaves.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(leaves.length / itemsPerPage);
+
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
+
+  const handleItemsPerPageChange = (e) => {
+    setItemsPerPage(Number(e.target.value));
+    setCurrentPage(1); // Reset to the first page
+  };
+
+  
   return (
     <div className="container-fluid mt-4">
       <div className="d-flex flex-wrap justify-content-between align-items-center mb-3">
@@ -67,6 +88,35 @@ const LeaveTable = () => {
             ))}
           </tbody>
         </Table>
+      </div>
+
+      <div className="d-flex justify-content-between align-items-center mt-3">
+        
+        <div>
+          <span>
+            Showing {indexOfFirstItem + 1} to{" "}
+            {Math.min(indexOfLastItem, leaves.length)} of {leaves.length} entries
+          </span>
+        </div>
+        <Pagination>
+          <Pagination.Prev
+            disabled={currentPage === 1}
+            onClick={() => handlePageChange(currentPage - 1)}
+          />
+          {Array.from({ length: totalPages }, (_, index) => (
+            <Pagination.Item
+              key={index}
+              active={index + 1 === currentPage}
+              onClick={() => handlePageChange(index + 1)}
+            >
+              {index + 1}
+            </Pagination.Item>
+          ))}
+          <Pagination.Next
+            disabled={currentPage === totalPages}
+            onClick={() => handlePageChange(currentPage + 1)}
+          />
+        </Pagination>
       </div>
       <Modal show={showModal} onHide={() => setShowModal(false)} size="lg">
         <Modal.Header closeButton>

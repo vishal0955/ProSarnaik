@@ -1,27 +1,47 @@
 import React, { useState } from "react";
-import { Table, Button, Dropdown, Form, Modal } from "react-bootstrap";
+import { Table, Button, Dropdown, Form, Modal, Pagination } from "react-bootstrap";
 import { FaEllipsisV } from "react-icons/fa";
 import { BsPlus, BsFileEarmarkArrowDown } from "react-icons/bs";
 import AddDepartment from "./AddDepartment";
 
 const Department = () => {
   const [showModal, setShowModal] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
+
   const [designations] = useState([
     { id: 1, name: "Project Owner", parent: "-" },
-    { id: 2, name: "Producation Team", parent: "-" },
+    { id: 2, name: "Production Team", parent: "-" },
     { id: 3, name: "Design", parent: "-" },
     { id: 4, name: "Human Resources", parent: "-" },
     { id: 5, name: "Finance", parent: "-" },
+    { id: 6, name: "Project Owner", parent: "-" },
+    { id: 7, name: "Production Team", parent: "-" },
+    { id: 8, name: "Design", parent: "-" },
+    { id: 9, name: "Human Resources", parent: "-" },
+    { id: 10, name: "Finance", parent: "-" },
   ]);
- const handleClick=()=>{
-  setShowModal(true);
- }
+
+  const handleClick = () => {
+    setShowModal(true);
+  };
+
+  // Pagination Logic
+  const indexOfFirstItem = (currentPage - 1) * itemsPerPage;
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const paginatedDesignations = designations.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(designations.length / itemsPerPage);
+
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
+
   return (
     <div className="container-fluid mt-4">
       {/* Header Buttons */}
       <div className="d-flex justify-content-between mb-3">
         <Button variant="primary" onClick={handleClick}>
-          <BsPlus className="me-1"  /> Add Department
+          <BsPlus className="me-1" /> Add Department
         </Button>
         <Button variant="light">
           <BsFileEarmarkArrowDown className="me-1" /> Export
@@ -30,7 +50,7 @@ const Department = () => {
 
       {/* Responsive Table */}
       <div className="table-responsive">
-        <Table striped bordered hover variant="">
+        <Table striped bordered hover>
           <thead>
             <tr>
               <th>
@@ -42,7 +62,7 @@ const Department = () => {
             </tr>
           </thead>
           <tbody>
-            {designations.map((designation) => (
+            {paginatedDesignations.map((designation) => (
               <tr key={designation.id}>
                 <td>
                   <Form.Check type="checkbox" />
@@ -58,7 +78,7 @@ const Department = () => {
                     <Dropdown>
                       <Dropdown.Toggle
                         as={Button}
-                        variant=""
+                        variant="light"
                         size="sm"
                         className="p-0 border-0"
                       >
@@ -77,35 +97,40 @@ const Department = () => {
         </Table>
       </div>
 
+      {/* Add Department Modal */}
       <Modal show={showModal} onHide={() => setShowModal(false)} size="lg">
-          <Modal.Header closeButton>
-          </Modal.Header>
-          <Modal.Body>
-    <AddDepartment />
-          </Modal.Body>
-        </Modal>
+        <Modal.Header closeButton></Modal.Header>
+        <Modal.Body>
+          <AddDepartment />
+        </Modal.Body>
+      </Modal>
 
       {/* Pagination */}
       <div className="d-flex justify-content-between align-items-center mt-3">
         <div>
-          Show{" "}
-          <Form.Select size="sm" style={{ width: "60px", display: "inline" }}>
-            <option>5</option>
-            <option>10</option>
-          </Form.Select>{" "}
-          entries
+          <span>
+            Showing {indexOfFirstItem + 1} to {Math.min(indexOfLastItem, designations.length)} of {designations.length} entries
+          </span>
         </div>
-        <div className="d-flex gap-2">
-          <Button variant="light" size="sm">
-            Previous
-          </Button>
-          <Button variant="primary" size="sm">
-            1
-          </Button>
-          <Button variant="light" size="sm">
-            Next
-          </Button>
-        </div>
+        <Pagination>
+          <Pagination.Prev
+            disabled={currentPage === 1}
+            onClick={() => handlePageChange(currentPage - 1)}
+          />
+          {Array.from({ length: totalPages }, (_, index) => (
+            <Pagination.Item
+              key={index}
+              active={index + 1 === currentPage}
+              onClick={() => handlePageChange(index + 1)}
+            >
+              {index + 1}
+            </Pagination.Item>
+          ))}
+          <Pagination.Next
+            disabled={currentPage === totalPages}
+            onClick={() => handlePageChange(currentPage + 1)}
+          />
+        </Pagination>
       </div>
     </div>
   );

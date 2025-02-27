@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Modal,    } from 'react-bootstrap';
 import {
   Container,
@@ -13,11 +13,14 @@ import {
 import dayjs from "dayjs";
 
 const Atendence = () => {
+ 
   const [currentDate, setCurrentDate] = useState(dayjs("2024-08-01"));
   const [view, setView] = useState("month");
 
   const employees = [
-    { name: "Jane Doe (you)", profile: "👩", leaves: ["2024-08-06"] },
+    { name: "Jane Doe ", profile: "👩", leaves: ["2024-08-06"] },
+    { name: "John Doe", profile: "🧑", leaves: ["2024-08-06"] },
+
     { name: "Alfredo Vetrov", profile: "🧑", leaves: [] },
     {
       name: "Serenity Bellamy",
@@ -38,8 +41,10 @@ const Atendence = () => {
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
+  const [filteredEmployee, setFilteredEmployee] = useState(employees);
 
-
+ const role = localStorage.getItem('role');
+  
   const leavesByDate = {
     "2024-08-06": "approved",
     "2024-08-09": "pending",
@@ -75,6 +80,13 @@ const Atendence = () => {
     return days;
   };
 
+  useEffect(() => {
+    if (role === 'designer') {
+      setFilteredEmployee(employees.filter(employee => employee.name === 'John Doe'));
+    } else {
+      setFilteredEmployee(employees);
+    }
+  }, [role]);
   const handlePrev = () => {
     setCurrentDate((prev) => {
       if (view === "week") return prev.subtract(1, "week");
@@ -352,7 +364,7 @@ const Atendence = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {employees.map((employee, empIndex) => (
+                    {filteredEmployee.map((employee, empIndex) => (
                       <tr key={empIndex}>
                         <td>
                           <span className="me-2">{employee.profile}</span>

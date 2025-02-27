@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Table, Button, Form, Modal } from "react-bootstrap";
+import { Table, Button, Form, Modal , Pagination} from "react-bootstrap";
 import { FaEllipsisV } from "react-icons/fa";
 import AddLeadContact from "../components/Forms/AddLeadContract";
 import { useNavigate } from "react-router-dom";
@@ -7,6 +7,8 @@ import { useNavigate } from "react-router-dom";
 
 const Lead = () => {
   const [showModal, setShowModal] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
   const navigate = useNavigate();
   
   const handleJobClick = () => {
@@ -15,6 +17,13 @@ const Lead = () => {
   const handleClick=()=>{
     setShowModal(true);
    }
+   const handleCloseModal = () => {
+    setShowModal(false);
+};
+
+const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+};
 
 
   const [leads, setLeads] = useState([
@@ -29,6 +38,11 @@ const Lead = () => {
     { id: 3, name: "Chelsea Weber", email: "fake@example.com", date: "29-01-2025" },
     { id: 2, name: "Mrs. Yesenia Okuneva", email: "fake@example.com", date: "29-01-2025" },
   ]);
+
+  const totalPages = Math.ceil(leads.length / itemsPerPage);
+    const indexOfFirstItem = (currentPage - 1) * itemsPerPage;
+    const indexOfLastItem = Math.min(indexOfFirstItem + itemsPerPage, leads.length);
+    const displayedJobs = leads.slice(indexOfFirstItem, indexOfLastItem);
 
   return (
     <div className="container-fluid mt-4">
@@ -80,14 +94,30 @@ const Lead = () => {
         </tbody>
       </Table>
       
-      <div className="d-flex justify-content-between">
-        <p>Showing 1 to 10 of {leads.length} entries</p>
-        <div>
-          <Button variant="outline-secondary" className="me-2">Previous</Button>
-          <Button variant="primary">1</Button>
-          <Button variant="outline-secondary" className="ms-2">Next</Button>
-        </div>
-      </div>
+      <div className="d-flex justify-content-between align-items-center mt-3">
+                <span>
+                    Showing {indexOfFirstItem + 1} to {indexOfLastItem} of {leads.length} entries
+                </span>
+                <Pagination >
+                <Pagination.Prev
+                    disabled={currentPage === 1}
+                    onClick={() => handlePageChange(currentPage - 1)}
+                />
+                {Array.from({ length: totalPages }, (_, page) => (
+                    <Pagination.Item
+                        key={page + 1}
+                        active={page + 1 === currentPage}
+                        onClick={() => handlePageChange(page + 1)}
+                    >
+                        {page + 1}
+                    </Pagination.Item>
+                ))}
+                <Pagination.Next
+                    disabled={currentPage === totalPages}
+                    onClick={() => handlePageChange(currentPage + 1)}
+                />
+            </Pagination>
+</div>
       
       <Modal show={showModal} onHide={() => setShowModal(false)} size="lg">
           <Modal.Header closeButton>

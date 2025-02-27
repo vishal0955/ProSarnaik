@@ -67,6 +67,7 @@ import WorkloadDesigner from "./Pages/Productionteam/WorkloadDesigner";
 import DesignerItems from "./Designer/Tasks";
 import OverTimeList from "./Pages/Productionteam/OverTimeList";
 import DesignerItemOverview from "./Designer/DesignerItemOverview";
+import DesignerOvertimeCard from "./Designer/DesignerOvertimecard";
 
 function App() {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
@@ -202,7 +203,7 @@ function App() {
             <Route path="/designeritems" element={<DesignerItems />} />
             <Route path="/dtimesheet" element={<DTimesheet />} />
             <Route path="/taskdetails" element={<TaskDetails />} />
-            
+            <Route path="/designerovertime" element={<DesignerOvertimeCard/>}/>
          <Route path="/contractForm" element={< ContractForm/>}/>
             
             

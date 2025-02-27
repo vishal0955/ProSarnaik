@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Table, Dropdown, Button } from "react-bootstrap";
+import { Table, Dropdown, Button ,Pagination } from "react-bootstrap";
 import { FaEllipsisV } from "react-icons/fa";
 import EmployeeTableHeader from "./EmployeeTableHeader";
 import { useNavigate } from "react-router-dom";
@@ -101,6 +101,30 @@ import { useNavigate } from "react-router-dom";
         ))}
       </tbody>
     </Table>
+    <div className="d-flex justify-content-between align-items-center mt-3">
+        <span>
+          Showing {indexOfFirstItem + 1} to {Math.min(indexOfLastItem, clients.length)} of {clients.length} entries
+        </span>
+        <Pagination>
+          <Pagination.Prev
+            disabled={currentPage === 1}
+            onClick={() => handlePageChange(currentPage - 1)}
+          />
+          {Array.from({ length: totalPages }, (_, index) => (
+            <Pagination.Item
+              key={index}
+              active={index + 1 === currentPage}
+              onClick={() => handlePageChange(index + 1)}
+            >
+              {index + 1}
+            </Pagination.Item>
+          ))}
+          <Pagination.Next
+            disabled={currentPage === totalPages}
+            onClick={() => handlePageChange(currentPage + 1)}
+          />
+        </Pagination>
+      </div>
     </>
 
   );

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Table, Dropdown, Modal, Button } from "react-bootstrap";
+import { Table, Dropdown, Modal, Button, Pagination } from "react-bootstrap";
 import { FaEllipsisV } from "react-icons/fa";
 import TableHeader from "../components/Tables/TableHeader";
 import TimeSheetDetail from "../components/Admin/TimeSheetDetail";
@@ -36,9 +36,21 @@ const TimesheetTable = () => {
   const [assigneModal, setAssigneModal] = useState(false);
   const [selectedTask, setSelectedTask] = useState(null);
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+
   const handleViewClick = (task) => {
     setSelectedTask(task);
     setAssigneModal(true);
+  };
+
+  const indexOfFirstItem = (currentPage - 1) * itemsPerPage;
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const paginatedTasks = tasks.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(tasks.length / itemsPerPage);
+
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
   };
 
   return (
@@ -56,7 +68,7 @@ const TimesheetTable = () => {
           </tr>
         </thead>
         <tbody>
-          {tasks.map((task, index) => (
+          {paginatedTasks.map((task, index) => (
             <tr key={index}>
               <td>{task.id}</td>
               <td>{task.code}</td>
@@ -70,9 +82,9 @@ const TimesheetTable = () => {
                     <FaEllipsisV />
                   </Dropdown.Toggle>
                   <Dropdown.Menu>
-                    <Dropdown.Item href="#" onClick={() => handleViewClick(task)}>View</Dropdown.Item>
-                    <Dropdown.Item href="#">Edit</Dropdown.Item>
-                    <Dropdown.Item href="#">Delete</Dropdown.Item>
+                    <Dropdown.Item onClick={() => handleViewClick(task)}>View</Dropdown.Item>
+                    <Dropdown.Item>Edit</Dropdown.Item>
+                    <Dropdown.Item>Delete</Dropdown.Item>
                   </Dropdown.Menu>
                 </Dropdown>
               </td>
@@ -81,26 +93,39 @@ const TimesheetTable = () => {
         </tbody>
       </Table>
 
-      {/* Modal for Viewing Task Details */}
+      <div className="d-flex justify-content-between align-items-center mt-3">
+        <div>
+          <span>
+            Showing {indexOfFirstItem + 1} to {Math.min(indexOfLastItem, tasks.length)} of {tasks.length} entries
+          </span>
+        </div>
+        <Pagination>
+          <Pagination.Prev
+            disabled={currentPage === 1}
+            onClick={() => handlePageChange(currentPage - 1)}
+          />
+          {Array.from({ length: totalPages }, (_, index) => (
+            <Pagination.Item
+              key={index}
+              active={index + 1 === currentPage}
+              onClick={() => handlePageChange(index + 1)}
+            >
+              {index + 1}
+            </Pagination.Item>
+          ))}
+          <Pagination.Next
+            disabled={currentPage === totalPages}
+            onClick={() => handlePageChange(currentPage + 1)}
+          />
+        </Pagination>
+      </div>
+
       <Modal show={assigneModal} onHide={() => setAssigneModal(false)} size="xl">
         <Modal.Header closeButton>
           <Modal.Title>Time Log Details</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          {selectedTask ? (
-            <>
-              {/* <p><strong>Task ID:</strong> {selectedTask.id}</p>
-              <p><strong>Task Name:</strong> {selectedTask.task}</p>
-              <p><strong>Project Code:</strong> {selectedTask.code}</p>
-              <p><strong>Start Time:</strong> {selectedTask.startTime}</p>
-              <p><strong>End Time:</strong> {selectedTask.endTime}</p>
-              <p><strong>Total Hours:</strong> {selectedTask.totalHours}</p>
-              <hr /> */}
-              <TimeSheetDetail />
-            </>
-          ) : (
-            <p>No task selected.</p>
-          )}
+          {selectedTask ? <TimeSheetDetail /> : <p>No task selected.</p>}
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={() => setAssigneModal(false)}>Close</Button>

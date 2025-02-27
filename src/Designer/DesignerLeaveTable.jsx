@@ -1,10 +1,16 @@
 import React, { useState } from "react";
-import { Table, Button, Badge,Modal } from "react-bootstrap";
+import { Table, Button, Badge,Modal ,Pagination} from "react-bootstrap";
 import { MoreVertical, List, Grid, User } from "lucide-react";
 import DesignerLeaveForm from "./DesignerLeaveForm";
+import { useNavigate } from "react-router-dom";
+
 
 const DesignerLeaveTable = () => {
     const [showModal, setShowModal] = useState(false);
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 10;
+
+    const navigate = useNavigate();
     
   const leaveData = [
     {
@@ -20,6 +26,18 @@ const DesignerLeaveTable = () => {
    const handleClick=()=>{
     setShowModal(true);
    }
+   const totalPages = Math.ceil(leaveData.length / itemsPerPage);
+    const indexOfFirstItem = (currentPage - 1) * itemsPerPage;
+    const indexOfLastItem = currentPage * itemsPerPage;
+    const displayedJobs = leaveData.slice(indexOfFirstItem, indexOfLastItem);
+
+    const handleJobClick = () => {
+      navigate(`/designerovertime`);
+  };
+
+    const handlePageChange = (pageNumber) => {
+      setCurrentPage(pageNumber);
+  };
 
   return (
     <div className="container-fluid mt-4">
@@ -61,7 +79,7 @@ const DesignerLeaveTable = () => {
           <tbody>
             {leaveData.map((leave) => (
               <tr key={leave.id}>
-                <td>
+                <td style={{ cursor: "pointer" }} onClick={handleJobClick}>
                   <div className="d-flex align-items-center">
                     <img src="https://i.ibb.co/zWVgTXyB/300.jpg" alt="300" border="0"  className="rounded-circle me-2"
                       width="40"
@@ -100,18 +118,32 @@ const DesignerLeaveTable = () => {
       </div>
 
       {/* Pagination */}
-      <div className="d-flex justify-content-between align-items-center">
-        <span>Showing 1 to 1 of 1 entries</span>
-        <div>
-          <Button variant="light" className="me-2">
-            Previous
-          </Button>
-          <Button variant="primary">1</Button>
-          <Button variant="light" className="ms-2">
-            Next
-          </Button>
-        </div>
-      </div>
+       <div className="d-flex justify-content-between align-items-center mt-3">
+
+            <span>
+                    Showing {indexOfFirstItem + 1} to {Math.min(indexOfLastItem, leaveData.length)} of {leaveData.length} entries
+                </span>
+            <Pagination className="justify-content-between">
+                
+                <Pagination.Prev
+                    disabled={currentPage === 1}
+                    onClick={() => handlePageChange(currentPage - 1)}
+                />
+                {Array.from({ length: totalPages }, (_, page) => (
+                    <Pagination.Item
+                        key={page + 1}
+                        active={page + 1 === currentPage}
+                        onClick={() => handlePageChange(page + 1)}
+                    >
+                        {page + 1}
+                    </Pagination.Item>
+                ))}
+                <Pagination.Next
+                    disabled={currentPage === totalPages}
+                    onClick={() => handlePageChange(currentPage + 1)}
+                />
+            </Pagination>
+            </div>
       
       <Modal show={showModal} onHide={() => setShowModal(false)} size="lg">
           <Modal.Header closeButton>

@@ -1,20 +1,7 @@
 import React, { useState } from "react";
-import {  Table, Dropdown,Form} from "react-bootstrap";
-import Jobs, { TaskTable } from "./Jobs";
+import { Table, Dropdown, Form, Pagination } from "react-bootstrap";
 import { FaEllipsisV } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
-
-const components = [
-    <div className="p-3">
-        <p>New </p><Jobs /></div>,
-    <div className="p-3">
-        <p>In Progress </p>
-        <Jobs /></div>,
-  <div className="p-3"><p>Completed </p><Jobs /></div>
-];
-
-const tabLabels = ["New", "In Progress", "Completed"];
-const statusFilters = ["Pending", "InProgress", "Completed"];
 
 const priorityColors = {
   High: "danger",
@@ -26,7 +13,7 @@ const priorityColors = {
 const statusColors = {
   Pending: "warning",
   InProgress: "info",
- " On Hold": "danger",
+  "On Hold": "danger",
   "To Start": "info",
   Completed: "success",
   Cancelled: "secondary",
@@ -73,11 +60,12 @@ const initialJobs = [
   },
 ];
 
-
 const Traffic = () => {
-  const [activeIndex, setActiveIndex] = useState(0);
   const [jobs, setJobs] = useState(initialJobs);
-  const navigate = useNavigate(); 
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
+  const navigate = useNavigate();
+
   const handlePriorityChange = (index, priority) => {
     const updatedJobs = [...jobs];
     updatedJobs[index].priority = priority;
@@ -90,18 +78,24 @@ const Traffic = () => {
     setJobs(updatedJobs);
   };
 
-  // const handleJobClick = (jobId) => {
-  //   // Navigate to the details page with the jobId as a parameter
-  //   navigate(`/details/${jobId}`);
-  // };
-  const handleJobClick = () => {
-    
-    navigate(`/taskdetails`);
+  const handleJobClick = (jobId) => {
+    navigate(`/taskdetails/${jobId}`);
+  };
+
+  // Pagination Logic
+  const indexOfFirstItem = (currentPage - 1) * itemsPerPage;
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const paginatedJobs = jobs.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(jobs.length / itemsPerPage);
+
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
   };
 
   return (
-    <div className="container ">
-  <div className="d-flex gap-3  mb-3">
+    <div className="container-fluid">
+      {/* Filters Section */}
+      <div className="d-flex gap-3 mb-3">
         <Form.Select>
           <option>Designer</option>
           <option>Ambrose Jenkins</option>
@@ -119,112 +113,104 @@ const Traffic = () => {
         <Form.Control type="text" placeholder="Start typing to search" />
       </div>
 
-      <ul className="nav nav-tabs">
-        {tabLabels.map((label, index) => (
-          <li className="nav-item" key={index}>
-            <button
-              className={`nav-link ${activeIndex === index ? "active" : ""}`}
-              onClick={() => setActiveIndex(index)}
-            >
-              {label}
-            </button>
-          </li>
-        ))}
-      </ul>
-     
-      <div  style={{height: "100vh"}}>
-    <Table responsive bordered hover  >
-      <thead>
-        <tr className="table-secondary">
-          <th>Job ID</th>
-          <th>Job Name</th>
-          <th>Project</th>
-          <th>Client</th>
-          <th>Promotion</th>
-          <th>Brand</th>
-          <th>Date Created</th>
-          <th>Target Date</th>
-          <th>Pack Code</th>
-          <th>FG Code</th>
-          <th>Barcode</th>
-          <th>Priority</th>
-          <th>Status</th>
-          <th>Action</th>
-        </tr>
-      </thead>
-      <tbody>
-        {jobs.map((job, index) => (
-          <tr key={index}>
-            <td 
-              style={{ cursor: 'pointer'}}
-              onClick={() => handleJobClick()} 
-            >
-              {job.jobId}
-             
-            </td>
-            <td 
-              style={{ cursor: 'pointer'}} 
-              onClick={() => handleJobClick()}
-            >
-              {job.jobName}
-            </td>
-            <td>{job.projectName} ({job.projectId})</td>
-            <td>{job.client}</td>
-            <td>{job.promotion}</td>
-            <td>{job.brand} - {job.subBrand}</td>
-            <td>{job.dateCreated}</td>
-            <td>{job.targetDate}</td>
-            <td>{job.packCode}</td>
-            <td>{job.fgCode}</td>
-            <td>{job.barcode}</td>
-            <td>
-              <Dropdown onSelect={(eventKey) => handlePriorityChange(index, eventKey)}>
-                <Dropdown.Toggle variant={priorityColors[job.priority]} id="dropdown-priority" style={{width:'90px'}}>
-                  {job.priority}
-                </Dropdown.Toggle>
-                <Dropdown.Menu>
-                  {Object.keys(priorityColors).map((priority) => (
-                    <Dropdown.Item key={priority} eventKey={priority} className={`text-${priorityColors[priority]}`} >
-                      {priority}
-                    </Dropdown.Item>
-                  ))}
-                </Dropdown.Menu>
-              </Dropdown>
-            </td>
-            <td>
-              <Dropdown onSelect={(eventKey) => handleStatusChange(index, eventKey)}>
-                <Dropdown.Toggle variant={statusColors[job.status]} id="dropdown-status" style={{width:'110px'}} >
-                  {job.status}
-                </Dropdown.Toggle>
-                <Dropdown.Menu>
-                  {Object.keys(statusColors).map((status) => (
-                    <Dropdown.Item key={status} eventKey={status} className={`text-${statusColors[status]}`}>
-                      {status}
-                    </Dropdown.Item>
-                  ))}
-                </Dropdown.Menu>
-              </Dropdown>
-            </td>
-            <td>
-              <Dropdown>
-                <Dropdown.Toggle variant="light" id="dropdown-basic">
-                  <FaEllipsisV />
-                </Dropdown.Toggle>
-                <Dropdown.Menu>
-                          <Dropdown.Item href="#">Post To Production</Dropdown.Item>
-                  <Dropdown.Item href="#">Edit</Dropdown.Item>
-                  <Dropdown.Item href="#">Delete</Dropdown.Item>
-                </Dropdown.Menu>
-              </Dropdown>
-            </td>
+      {/* Jobs Table */}
+      <Table responsive bordered hover>
+        <thead>
+          <tr className="table-secondary">
+            <th>Job ID</th>
+            <th>Job Name</th>
+            <th>Project</th>
+            <th>Client</th>
+            <th>Promotion</th>
+            <th>Brand</th>
+            <th>Date Created</th>
+            <th>Target Date</th>
+            <th>Pack Code</th>
+            <th>FG Code</th>
+            <th>Barcode</th>
+            <th>Priority</th>
+            <th>Status</th>
+            <th>Action</th>
           </tr>
-        ))}
-      </tbody>
-    </Table>
-    </div>
+        </thead>
+        <tbody>
+          {paginatedJobs.map((job, index) => (
+            <tr key={job.jobId}>
+              <td style={{ cursor: "pointer" }} onClick={() => handleJobClick(job.jobId)}>
+                {job.jobId}
+              </td>
+              <td style={{ cursor: "pointer" }} onClick={() => handleJobClick(job.jobId)}>
+                {job.jobName}
+              </td>
+              <td>{job.projectName} ({job.projectId})</td>
+              <td>{job.client}</td>
+              <td>{job.promotion}</td>
+              <td>{job.brand} - {job.subBrand}</td>
+              <td>{job.dateCreated}</td>
+              <td>{job.targetDate}</td>
+              <td>{job.packCode}</td>
+              <td>{job.fgCode}</td>
+              <td>{job.barcode}</td>
+              <td>
+                <Dropdown onSelect={(eventKey) => handlePriorityChange(index, eventKey)}>
+                  <Dropdown.Toggle variant={priorityColors[job.priority]} id="dropdown-priority">
+                    {job.priority}
+                  </Dropdown.Toggle>
+                  <Dropdown.Menu>
+                    {Object.keys(priorityColors).map((priority) => (
+                      <Dropdown.Item key={priority} eventKey={priority} className={`text-${priorityColors[priority]}`}>
+                        {priority}
+                      </Dropdown.Item>
+                    ))}
+                  </Dropdown.Menu>
+                </Dropdown>
+              </td>
+              <td>
+                <Dropdown onSelect={(eventKey) => handleStatusChange(index, eventKey)}>
+                  <Dropdown.Toggle variant={statusColors[job.status]} id="dropdown-status">
+                    {job.status}
+                  </Dropdown.Toggle>
+                  <Dropdown.Menu>
+                    {Object.keys(statusColors).map((status) => (
+                      <Dropdown.Item key={status} eventKey={status} className={`text-${statusColors[status]}`}>
+                        {status}
+                      </Dropdown.Item>
+                    ))}
+                  </Dropdown.Menu>
+                </Dropdown>
+              </td>
+              <td>
+                <Dropdown>
+                  <Dropdown.Toggle variant="light" id="dropdown-basic">
+                    <FaEllipsisV />
+                  </Dropdown.Toggle>
+                  <Dropdown.Menu>
+                    <Dropdown.Item href="#">Post To Production</Dropdown.Item>
+                    <Dropdown.Item href="#">Edit</Dropdown.Item>
+                    <Dropdown.Item href="#">Delete</Dropdown.Item>
+                  </Dropdown.Menu>
+                </Dropdown>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </Table>
 
+      {/* Pagination */}
+      <div className="d-flex justify-content-between align-items-center mt-3">
+        <span>
+          Showing {indexOfFirstItem + 1} to {Math.min(indexOfLastItem, jobs.length)} of {jobs.length} entries
+        </span>
+        <Pagination>
+          {[...Array(totalPages)].map((_, index) => (
+            <Pagination.Item key={index} active={index + 1 === currentPage} onClick={() => handlePageChange(index + 1)}>
+              {index + 1}
+            </Pagination.Item>
+          ))}
+        </Pagination>
+      </div>
     </div>
   );
 };
 
-export default Traffic ;
+export default Traffic;

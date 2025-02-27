@@ -16,6 +16,14 @@ const dealsData = [
 const Deal = () => {
   const [showModal, setShowModal] = useState(false);
   const [deals, setDeals] = useState(dealsData);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+
+  const totalPages = Math.ceil(deals.length / itemsPerPage);
+  const indexOfFirstItem = (currentPage - 1) * itemsPerPage;
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const displayedDeals = deals.slice(indexOfFirstItem, indexOfLastItem);
+
   const handleClick=()=>{
     setShowModal(true);
    }
@@ -24,7 +32,9 @@ const Deal = () => {
   const handleJobClick = () => {
     navigate(`/dealDetail`);
   };
-
+ const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
   return (
     <>
     <Container-fluid className="mt-4">
@@ -93,12 +103,25 @@ const Deal = () => {
       </Table>
 
       {/* Pagination */}
-      <Pagination>
-        <Pagination.Prev />
-        <Pagination.Item active>{1}</Pagination.Item>
-        <Pagination.Item>{2}</Pagination.Item>
-        <Pagination.Next />
-      </Pagination>
+      <div className="d-flex justify-content-between align-items-center mt-3"> 
+  
+  <span>
+            Showing {indexOfFirstItem + 1} to {Math.min(indexOfLastItem, deals.length)} of {deals.length} entries
+          </span>
+        <Pagination className="justify-content-between">
+          <Pagination.Prev disabled={currentPage === 1} onClick={() => handlePageChange(currentPage - 1)} />
+          {Array.from({ length: totalPages }, (_, index) => (
+            <Pagination.Item
+              key={index + 1}
+              active={index + 1 === currentPage}
+              onClick={() => handlePageChange(index + 1)}
+            >
+              {index + 1}
+            </Pagination.Item>
+          ))}
+          <Pagination.Next disabled={currentPage === totalPages} onClick={() => handlePageChange(currentPage + 1)} />
+        </Pagination>
+        </div>
     </Container-fluid>
     <Modal show={showModal} onHide={() => setShowModal(false)} size="lg">
           <Modal.Header closeButton>

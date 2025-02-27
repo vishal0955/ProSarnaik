@@ -1,11 +1,13 @@
 import React, { useState } from "react";
-import { Table, Button, Dropdown, Form, Modal } from "react-bootstrap";
+import { Table, Button, Dropdown, Form, Modal, Pagination  } from "react-bootstrap";
 import { FaEllipsisV } from "react-icons/fa";
 import AddClient from "./AddClient";
 import AddDesignation from "./AddDesignation";
 
 const DesignationTable = () => {
   const [showModal, setShowModal] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
   const handleClick=()=>{
     setShowModal(true);
    }
@@ -16,6 +18,20 @@ const DesignationTable = () => {
     { id: 4, name: "Team Lead", parent: "-" },
     { id: 5, name: "Project Manager", parent: "-" },
   ]);
+
+  const indexOfFirstItem = (currentPage - 1) * itemsPerPage;
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const paginatedDesignations = designations.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(designations.length / itemsPerPage);
+
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
+
+  const handleItemsPerPageChange = (e) => {
+    setItemsPerPage(Number(e.target.value));
+    setCurrentPage(1); // Reset to the first page
+  };
 
   return (
     <div className="container-fluid mt-4">
@@ -72,26 +88,34 @@ const DesignationTable = () => {
         </tbody>
       </Table>
 
-      <div className="d-flex justify-content-between align-items-center">
+      <div className="d-flex justify-content-between align-items-center mt-3">
+        
         <div>
-          Show{" "}
-          <Form.Select size="sm" style={{ width: "60px", display: "inline" }}>
-            <option>5</option>
-            <option>10</option>
-          </Form.Select>{" "}
-          entries
+          <span>
+            Showing {indexOfFirstItem + 1} to{" "}
+            {Math.min(indexOfLastItem, designations.length)} of{" "}
+            {designations.length} entries
+          </span>
         </div>
-        <div>
-          <Button variant="light" size="sm">
-            Previous
-          </Button>
-          <Button variant="primary" size="sm" className="ms-2">
-            1
-          </Button>
-          <Button variant="light" size="sm" className="ms-2">
-            Next
-          </Button>
-        </div>
+        <Pagination>
+          <Pagination.Prev
+            disabled={currentPage === 1}
+            onClick={() => handlePageChange(currentPage - 1)}
+          />
+          {Array.from({ length: totalPages }, (_, index) => (
+            <Pagination.Item
+              key={index}
+              active={index + 1 === currentPage}
+              onClick={() => handlePageChange(index + 1)}
+            >
+              {index + 1}
+            </Pagination.Item>
+          ))}
+          <Pagination.Next
+            disabled={currentPage === totalPages}
+            onClick={() => handlePageChange(currentPage + 1)}
+          />
+        </Pagination>
       </div>
 
       <Modal show={showModal} onHide={() => setShowModal(false)} size="lg">

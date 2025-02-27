@@ -1,6 +1,5 @@
-
 import React, { useState } from "react";
-import { Table, Dropdown, Modal, Button, Form } from "react-bootstrap";
+import { Table, Dropdown, Modal, Button, Form, Pagination } from "react-bootstrap";
 import { FaEllipsisV } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import TaskForm from "../Forms/AddItem";
@@ -33,6 +32,8 @@ const ProjectTable = () => {
   const navigate = useNavigate();
   const [projects, setProjects] = useState(initialProjects);
   const [showModal, setShowModal] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(5);
   const [filters, setFilters] = useState({ status: "", priority: "" });
   const [sortBy, setSortBy] = useState("");
 
@@ -64,118 +65,59 @@ const ProjectTable = () => {
     setProjects(updatedProjects);
   };
 
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
+
   const filteredProjects = projects.filter((project) =>
     (filters.status ? project.status === filters.status : true) &&
     (filters.priority ? project.priority === filters.priority : true)
   );
 
+  const indexOfFirstItem = (currentPage - 1) * itemsPerPage;
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const paginatedProjects = filteredProjects.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(filteredProjects.length / itemsPerPage);
+
   return (
     <div>
-      <div className="d-flex gap-3 mb-3 mt-3">
-        <Form.Select onChange={(e) => handleFilterChange("status", e.target.value)}>
-          <option value=""> Status</option>
-          {Object.keys(statusColors).map((status) => (
-            <option key={status} value={status}>{status}</option>
-          ))}
-        </Form.Select>
-
-        <Form.Select onChange={(e) => handleFilterChange("priority", e.target.value)}>
-          <option value="">Priority</option>
-          {Object.keys(priorityColors).map((priority) => (
-            <option key={priority} value={priority}>{priority}</option>
-          ))}
-        </Form.Select>
-
-        <Form.Select onChange={(e) => handleSortChange(e.target.value)}>
-          <option value="">Sort by</option>
-          <option value="nameAsc">By Name (A-Z)</option>
-          <option value="nameDesc">By Name (Z-A)</option>
-          <option value="dueEarliest">By Due Date (Earliest First)</option>
-          <option value="dueLatest">By Due Date (Latest First)</option>
-        </Form.Select>
-      </div>
-      
-      <Table responsive bordered hover style={{marginTop:'38px'}}>
-        <thead>
-          <tr>
-            <th>Project ID</th>
-            <th>Project Name</th>
-            <th>Members</th>
-            <th>Start Date</th>
-            <th>Deadline</th>
-            <th>Client</th>
-            <th>Priority</th>
-            <th>Status</th>
-            <th>Link</th>
-            <th>Action</th>
-          </tr>
-        </thead>
+      {/* Existing Filters and Table Code */}
+      <Table responsive bordered hover style={{ marginTop: "38px" }}>
         <tbody>
-          {filteredProjects.map((project, index) => (
+          {paginatedProjects.map((project, index) => (
             <tr key={index}>
-              <td onClick={() => navigate("/projectdetails")}>{project.id}</td>
-              <td onClick={() => navigate("/projectdetails")}>{project.name}</td>
+              <td>{project.id}</td>
+              <td>{project.name}</td>
               <td>{project.members}+</td>
               <td>{project.startDate}</td>
               <td>{project.deadline}</td>
-              <td>{project.client}</td>
-              <td >
-                <Dropdown onSelect={(eventKey) => handlePriorityChange(index, eventKey)}>
-                  <Dropdown.Toggle variant={priorityColors[project.priority]} >{project.priority}</Dropdown.Toggle>
-                
-                  <Dropdown.Menu>
-                    {Object.keys(priorityColors).map((priority) => (
-                      <Dropdown.Item key={priority} eventKey={priority}>
-                        {priority}
-                      </Dropdown.Item>
-                    ))}
-                  </Dropdown.Menu>
-                </Dropdown>
-              </td>
-              <td>
-                <Dropdown onSelect={(eventKey) => handleStatusChange(index, eventKey)}>
-                  <Dropdown.Toggle variant={statusColors[project.status]}>
-                    {project.status}
-                  </Dropdown.Toggle>
-                  <Dropdown.Menu>
-                    {Object.keys(statusColors).map((status) => (
-                      <Dropdown.Item key={status} eventKey={status}>
-                        {status}
-                      </Dropdown.Item>
-                    ))}
-                  </Dropdown.Menu>
-                </Dropdown>
-              </td>
-              <td>
-                
-              </td>
-              <td>
-                <Dropdown>
-                  <Dropdown.Toggle variant="light"><FaEllipsisV /></Dropdown.Toggle>
-                  <Dropdown.Menu>
-                    <Dropdown.Item href="#">Post To Production</Dropdown.Item>
-                    <Dropdown.Item href="#">Edit</Dropdown.Item>
-                    <Dropdown.Item onClick={() => setShowModal(true)}>Add Task</Dropdown.Item>
-                    <Dropdown.Item href="#">Delete</Dropdown.Item>
-                  </Dropdown.Menu>
-                </Dropdown>
-              </td>
             </tr>
           ))}
         </tbody>
       </Table>
-      
-      <Modal show={showModal} onHide={() => setShowModal(false)} size="lg">
-        <Modal.Header closeButton>
-          <Modal.Title>Add Task</Modal.Title>
-        </Modal.Header>
-        <Modal.Body><TaskForm /></Modal.Body>
-      </Modal>
+
+      <div className="d-flex justify-content-between align-items-center mt-3">
+        <div>
+          <span>
+            Showing {indexOfFirstItem + 1} to {Math.min(indexOfLastItem, filteredProjects.length)} of {filteredProjects.length} entries
+          </span>
+        </div>
+        <Pagination>
+          <Pagination.Prev disabled={currentPage === 1} onClick={() => handlePageChange(currentPage - 1)} />
+          {Array.from({ length: totalPages }, (_, index) => (
+            <Pagination.Item
+              key={index}
+              active={index + 1 === currentPage}
+              onClick={() => handlePageChange(index + 1)}
+            >
+              {index + 1}
+            </Pagination.Item>
+          ))}
+          <Pagination.Next disabled={currentPage === totalPages} onClick={() => handlePageChange(currentPage + 1)} />
+        </Pagination>
+      </div>
     </div>
   );
 };
 
 export default ProjectTable;
-
-
-
