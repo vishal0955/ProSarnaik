@@ -66,6 +66,7 @@ import ProjectInvoiceTable from "./components/Tables/InvoiceTable";
 import WorkloadDesigner from "./Pages/Productionteam/WorkloadDesigner";
 import DesignerItems from "./Designer/Tasks";
 import OverTimeList from "./Pages/Productionteam/OverTimeList";
+import DesignerItemOverview from "./Designer/DesignerItemOverview";
 
 function App() {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
@@ -211,6 +212,8 @@ function App() {
             <Route path="/edittaskdetails" element={<TaskDetailsForm />} />
 
              <Route path="/workload" element={<WorkloadDesigner />} />
+
+             <Route path="/designeritemoverview" element={<DesignerItemOverview />} />
           </Routes>
         </div>
       </div>

@@ -13,12 +13,11 @@ import {
   YAxis,
 } from "recharts";
 import { FaDollarSign, FaClock } from "react-icons/fa";
+import TableTask from "../components/Admin/TableTask";
+import FileUpload from "../components/Admin/FileUpload";
+import TimeLogTable from "../components/Admin/TimeLogTable";
 
-import ProjectMembers from "./ProjectMember (1)";
-import TableTask from "../Admin/TableTask";
-import InvoiceTable from "../Admin/invoices";
-import FileUpload from "../Admin/FileUpload";
-import TimeLogTable from "../Admin/TimeLogTable";
+
 
 // Colors for the Pie Chart
 const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF4444"];
@@ -259,7 +258,7 @@ const components = [
 
 const tabLabels = [
   "Overview",
-  "Designers",
+//   "Designers",
   
   "Tasks",
   "History",

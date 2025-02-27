@@ -52,6 +52,7 @@ const initialJobs = [
 const stageOptions = ["Home", "Production", "Designer"];
 
 export const TaskTable = () => {
+  const role = localStorage.getItem("role");
   const [jobs, setJobs] = useState(initialJobs);
   const navigate = useNavigate();
 
@@ -67,9 +68,10 @@ export const TaskTable = () => {
     setJobs(updatedJobs);
   };
 
-  const handleJobClick = () => {
-    navigate(`/itemoverview`);
-  };
+  const handleTaskClick = () => {
+    {role = "designer" ? navigate("/designeritemoverview") : navigate("/itemoverview")};
+
+  }
 
   return (
     <div style={{ height: "100vh" }}>
@@ -96,10 +98,10 @@ export const TaskTable = () => {
         <tbody>
           {jobs.map((job, index) => (
             <tr key={index}>
-              <td style={{ cursor: "pointer" }} onClick={() => handleJobClick()}>
+              <td style={{ cursor: "pointer" }} onClick={() => handleTaskClick()}>
                 {job.jobId}
               </td>
-              <td style={{ cursor: "pointer" }} onClick={() => handleJobClick()}>{job.brand}</td>
+              <td style={{ cursor: "pointer" }} onClick={() => handleTaskClick()}>{job.brand}</td>
               <td>{job.subBrand}</td>
               <td>{job.flavour}</td>
               <td>{job.packType}</td>
@@ -181,7 +183,7 @@ export const TaskTable = () => {
 const TaskPage = () => {
   return (
     <div style={{ height: "100vh" }}>
-      <TableHeader title="All Item" buttonText="Add Item" />
+      <TableHeader title="All Item" buttonText="Add Item"  />
       <TaskTable className="tabledown" />
     </div>
   );

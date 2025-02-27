@@ -5,7 +5,12 @@ import { useNavigate } from "react-router-dom";
 import TaskForm from "../Forms/AddItem";
 import TaskNewForm from "../Tables/TaskNewForm";
 
+
+
 const TableTask = ({ tag }) => {
+
+  const role = localStorage.getItem("role");
+  console.log("Role:", role);
   const [showModal, setShowModal] = useState(false);
   const navigate = useNavigate();
 
@@ -57,7 +62,7 @@ const TableTask = ({ tag }) => {
         <Table responsive bordered hover>
           <thead>
             <tr>
-              <th>Code</th>
+              <th >Code</th>
               <th>Task</th>
               <th>Start Date</th>
               <th>Due Date</th>
@@ -70,13 +75,14 @@ const TableTask = ({ tag }) => {
           <tbody>
             {filteredTasks.map((task, index) => (
               <tr key={index}>
-                <td onClick={handleTaskClick}>{task.code}</td>
+                <td onClick={handleTaskClick} style={{ cursor: "pointer" }}>{task.code}</td>
                 <td>
                   <span
                     className="badge"
                     style={{
                       backgroundColor: priorityColors[task.priority]?.bg,
-                      color: priorityColors[task.priority]?.text
+                      color: priorityColors[task.priority]?.text,
+                      cursor: "pointer",
                     }}
                     onClick={handleTaskClick}
                   >

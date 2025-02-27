@@ -76,9 +76,13 @@ export const TaskTable = ({ filterStatus }) => {
   const [assigneModal, setAssigneModal] = useState(false);
   const [jobs, setJobs] = useState(initialJobs);
 
-  const handleJobClick = () => {
-    navigate(`/itemoverview`);
-  };
+  // const handleJobClick = () => {
+  //   navigate(`/itemoverview`);
+  // };
+ 
+  const handleItemClick= (jobId) => {
+    navigate(`/designeritemoverview`);
+  }
 
   const filteredJobs = jobs.filter((job) => job.status === filterStatus || !filterStatus);
 
@@ -131,8 +135,8 @@ export const TaskTable = ({ filterStatus }) => {
         <tbody>
           {filteredJobs.map((job, index) => (
             <tr key={index}>
-              <td style={{ cursor: 'pointer' }} onClick={handleJobClick}>{job.jobId}</td>
-              <td style={{ cursor: 'pointer' }} onClick={handleJobClick}>{job.jobName}</td>
+              <td style={{ cursor: 'pointer' }} onClick={handleItemClick}>{job.jobId}</td>
+              <td style={{ cursor: 'pointer' }} onClick={handleItemClick}>{job.jobName}</td>
               <td>{job.projectName} ({job.projectId})</td>
               <td>{job.client}</td>
               <td>{job.promotion}</td>
