@@ -4,6 +4,8 @@ import "./Sidebar.css";
 import { LuTreePalm } from "react-icons/lu";
 import { FaTrafficLight } from "react-icons/fa6";
 import { SiCrayon } from "react-icons/si";
+import { FaRegCalendarTimes } from "react-icons/fa";
+import { FaRegCalendarCheck } from "react-icons/fa6";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { 
   faUsers,         // CRM  
@@ -93,7 +95,7 @@ const Sidebar = ({ collapsed, menuItemClick }) => {
                   </li>
                   <li className={`submenu-item ${isActive("/leavetable") ? "active" : ""}`}
                     onClick={() => { navigate("/leavetable"); menuItemClick(); }}>
-                    <LuTreePalm />
+                    <FaRegCalendarTimes />
                     <span className="menu-text">Leave</span>
                   </li>
                   <li className={`submenu-item ${isActive("/attendance") ? "active" : ""}`}
@@ -223,12 +225,12 @@ const Sidebar = ({ collapsed, menuItemClick }) => {
                       
                   <li className={`submenu-item ${isActive("/overtimelist") ? "active" : ""}`}
                     onClick={() => { navigate("/overtimelist"); menuItemClick(); }}>
-                    <LuTreePalm />
+                   <FaRegCalendarTimes />
                     <span className="menu-text">OverTime Approval</span>
                   </li>
                   <li className={`submenu-item ${isActive("/designerleavetable") ? "active" : ""}`}
                     onClick={() => { navigate("/designerleavetable"); menuItemClick(); }}>
-                    <LuTreePalm />
+                   <FaRegCalendarCheck />
                     <span className="menu-text">My Leave </span>
                   </li>
 
@@ -303,12 +305,12 @@ const Sidebar = ({ collapsed, menuItemClick }) => {
                  
                   <li className={`submenu-item ${isActive("/designerleavetable") ? "active" : ""}`}
                     onClick={() => { navigate("/designerleavetable"); menuItemClick(); }}>
-                   <LuTreePalm />
+                   <FaRegCalendarTimes />
                     <span className="menu-text">Leave</span>
                   </li>
                   <li className={`submenu-item ${isActive("/leavetable") ? "active" : ""}`}
                     onClick={() => { navigate("/leavetable"); menuItemClick(); }}>
-                    <LuTreePalm />
+                    <FaRegCalendarCheck />
                     <span className="menu-text">Leave Approval</span>
                   </li>
                   <li className={`submenu-item ${isActive("/attendance") ? "active" : ""}`}
@@ -365,7 +367,7 @@ const Sidebar = ({ collapsed, menuItemClick }) => {
                  
                   <li className={`submenu-item ${isActive("/designerleavetable") ? "active" : ""}`}
                     onClick={() => { navigate("/designerleavetable"); menuItemClick(); }}>
-                   <LuTreePalm />
+                  <FaRegCalendarTimes />
                     <span className="menu-text">Leave</span>
                   </li>
                   <li className={`submenu-item ${isActive("/attendance") ? "active" : ""}`}
