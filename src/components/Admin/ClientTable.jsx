@@ -31,6 +31,9 @@ import { useNavigate } from "react-router-dom";
         created: "2023-12-05",
       },
   ]);
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
  const handleClick=() =>{
      navigate("/clientprofile")
  }
@@ -40,8 +43,19 @@ import { useNavigate } from "react-router-dom";
     setClients(updatedClients);
   };
 
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
+
+  const indexOfFirstItem = (currentPage - 1) * itemsPerPage;
+  const indexOfLastItem = currentPage * itemsPerPage;
+
+  const paginatedClients = clients.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(clients.length / itemsPerPage);
+
+
   return (
-    <Table responsive bordered hover className="tabledown">
+    <>    <Table responsive bordered hover className="tabledown">
       <thead>
         <tr className="table-secondary">
           <th>ID</th>
@@ -87,6 +101,8 @@ import { useNavigate } from "react-router-dom";
         ))}
       </tbody>
     </Table>
+    </>
+
   );
 };
 
